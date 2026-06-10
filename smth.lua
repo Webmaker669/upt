@@ -23,8 +23,9 @@ ReopenButton.TextSize = 13
 ReopenButton.Visible = false
 Instance.new("UICorner", ReopenButton).CornerRadius = UDim.new(0, 6)
 
--- Main Interface Panel (Fixed Proportional Boundary Container)
+-- Main Interface Panel (Forced Naming Matching Directory Indexes)
 local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 550, 0, 420)
 MainFrame.Position = UDim2.new(0.5, -275, 0.4, -210)
 MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
@@ -66,21 +67,21 @@ CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.TextSize = 12
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 12)
 
--- Fixed Left Sidebar Panel Layout (Parented INSIDE MainFrame Boundary)
-local SidebarFrame = Instance.new("Frame", MainFrame)
-SidebarFrame.Size = UDim2.new(0, 120, 1, -50)
-SidebarFrame.Position = UDim2.new(0, 0, 0, 50)
-SidebarFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-SidebarFrame.BackgroundTransparency = 0.2
-SidebarFrame.BorderSizePixel = 0
-Instance.new("UICorner", SidebarFrame).CornerRadius = UDim.new(0, 10)
+-- Fixed Inner Sidebar Container (Strictly Nested to Map Your Directory Query)
+local OuterSidebar = Instance.new("Frame", MainFrame)
+OuterSidebar.Name = "OuterSidebar"
+OuterSidebar.Size = UDim2.new(0, 120, 1, -50)
+OuterSidebar.Position = UDim2.new(0, 0, 0, 50)
+OuterSidebar.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+OuterSidebar.BackgroundTransparency = 0.2
+OuterSidebar.BorderSizePixel = 0
+Instance.new("UICorner", OuterSidebar).CornerRadius = UDim.new(0, 10)
 
-local SidebarFix = Instance.new("Frame", SidebarFrame)
-SidebarFix.Size = UDim2.new(0, 15, 1, 0)
-SidebarFix.Position = UDim2.new(1, -15, 0, 0)
-SidebarFix.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-SidebarFix.BackgroundTransparency = 0.2
-SidebarFix.BorderSizePixel = 0
+local SidebarFrame = Instance.new("Frame", OuterSidebar)
+SidebarFrame.Name = "SidebarFrame"
+SidebarFrame.Size = UDim2.new(1, 0, 1, 0)
+SidebarFrame.BackgroundTransparency = 1
+SidebarFrame.BorderSizePixel = 0
 
 local NavListLayout = Instance.new("UIListLayout", SidebarFrame)
 NavListLayout.Padding = UDim.new(0, 8)
@@ -123,9 +124,9 @@ local function switchTab(name, button)
     activeTabBtn.BackgroundColor3 = Color3.fromRGB(65, 135, 240)
 end
 
--- Generates Button Layer directly relative to inside the Container frame
+-- Generates Button Layer directly inside the exact frame target child path
 local function addTabButton(text, targetPageName, order)
-    local btn = Instance.new("TextButton", SidebarFrame) -- Strictly parented to SidebarFrame
+    local btn = Instance.new("TextButton", SidebarFrame) -- Locks parent directly inside SidebarFrame
     btn.Size = UDim2.new(0, 100, 0, 35)
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(240, 240, 245)
