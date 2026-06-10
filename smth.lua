@@ -1,5 +1,5 @@
 -- =============================================================================
--- PART 1: MAIN TRANS-SLATE WINDOW FRAMEWORK
+-- PART 1: MAIN CANVAS & FIXED INTERNAL NAV SIDEBAR
 -- =============================================================================
 local CoreGui = game:GetService("CoreGui")
 
@@ -11,24 +11,39 @@ local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.Name = "BuildABoatToolHub"
 ScreenGui.ResetOnSpawn = false
 
+-- Hidden Master Trigger Button
+local ReopenButton = Instance.new("TextButton", ScreenGui)
+ReopenButton.Size = UDim2.new(0, 140, 0, 40)
+ReopenButton.Position = UDim2.new(0, 15, 0, 15)
+ReopenButton.Text = "Open Tool Hub"
+ReopenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ReopenButton.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
+ReopenButton.Font = Enum.Font.GothamBold
+ReopenButton.TextSize = 13
+ReopenButton.Visible = false
+Instance.new("UICorner", ReopenButton).CornerRadius = UDim.new(0, 6)
+
+-- Main Interface Panel (Fixed Proportional Boundary Container)
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 550, 0, 420)
 MainFrame.Position = UDim2.new(0.5, -275, 0.4, -210)
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
 MainFrame.BackgroundTransparency = 0.15
 MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
 
+-- Header Bar
 local HeaderFrame = Instance.new("Frame", MainFrame)
 HeaderFrame.Size = UDim2.new(1, 0, 0, 50)
-HeaderFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+HeaderFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+HeaderFrame.BorderSizePixel = 0
 Instance.new("UICorner", HeaderFrame).CornerRadius = UDim.new(0, 10)
 
 local HeaderFix = Instance.new("Frame", HeaderFrame)
 HeaderFix.Size = UDim2.new(1, 0, 0, 10)
 HeaderFix.Position = UDim2.new(0, 0, 1, -10)
-HeaderFix.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+HeaderFix.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
 HeaderFix.BorderSizePixel = 0
 
 local TitleLabel = Instance.new("TextLabel", HeaderFrame)
@@ -51,27 +66,31 @@ CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.TextSize = 12
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 12)
 
+-- Fixed Left Sidebar Panel Layout (Correctly Parented INSIDE MainFrame Window Boundary)
 local SidebarFrame = Instance.new("Frame", MainFrame)
 SidebarFrame.Size = UDim2.new(0, 120, 1, -50)
 SidebarFrame.Position = UDim2.new(0, 0, 0, 50)
-SidebarFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+SidebarFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+SidebarFrame.BackgroundTransparency = 0.2
 SidebarFrame.BorderSizePixel = 0
 Instance.new("UICorner", SidebarFrame).CornerRadius = UDim.new(0, 10)
 
 local SidebarFix = Instance.new("Frame", SidebarFrame)
 SidebarFix.Size = UDim2.new(0, 15, 1, 0)
 SidebarFix.Position = UDim2.new(1, -15, 0, 0)
-SidebarFix.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+SidebarFix.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+SidebarFix.BackgroundTransparency = 0.2
 SidebarFix.BorderSizePixel = 0
 
 local NavListLayout = Instance.new("UIListLayout", SidebarFrame)
-NavListLayout.Padding = UDim.new(0, 6)
+NavListLayout.Padding = UDim.new(0, 8)
 NavListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 NavListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
 local NavPadding = Instance.new("UIPadding", SidebarFrame)
-NavPadding.PaddingTop = UDim.new(0, 12)
+NavPadding.PaddingTop = UDim.new(0, 15)
 
+-- Viewport Content Panel
 local ContentContainer = Instance.new("Frame", MainFrame)
 ContentContainer.Size = UDim2.new(1, -120, 1, -50)
 ContentContainer.Position = UDim2.new(0, 120, 0, 50)
@@ -104,9 +123,10 @@ local function switchTab(name, button)
     activeTabBtn.BackgroundColor3 = Color3.fromRGB(65, 135, 240)
 end
 
+-- Generates Button Layer directly relative to inside the Container frame
 local function addTabButton(text, targetPageName, order)
     local btn = Instance.new("TextButton", SidebarFrame)
-    btn.Size = UDim2.new(0, 100, 0, 32)
+    btn.Size = UDim2.new(0, 100, 0, 35) -- Fixed width to clear text overlap clipping issues
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(240, 240, 245)
     btn.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
@@ -114,6 +134,7 @@ local function addTabButton(text, targetPageName, order)
     btn.TextSize = 12
     btn.LayoutOrder = order
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    
     btn.MouseButton1Click:Connect(function() switchTab(targetPageName, btn) end)
     return btn
 end
@@ -122,23 +143,13 @@ local startTabBtn = addTabButton("Hub Home", "Start", 1)
 local circleTabBtn = addTabButton("Circle", "Circle", 2)
 local farmTabBtn = addTabButton("Auto Farm", "AutoFarm", 3)
 
-local ReopenButton = Instance.new("TextButton", ScreenGui)
-ReopenButton.Size = UDim2.new(0, 140, 0, 40)
-ReopenButton.Position = UDim2.new(0, 15, 0.85, 0)
-ReopenButton.Text = "Open Tool Hub"
-ReopenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ReopenButton.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
-ReopenButton.Font = Enum.Font.GothamBold
-ReopenButton.TextSize = 13
-ReopenButton.Visible = false
-Instance.new("UICorner", ReopenButton).CornerRadius = UDim.new(0, 6)
-
 CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false ReopenButton.Visible = true end)
 ReopenButton.MouseButton1Click:Connect(function() MainFrame.Visible = true ReopenButton.Visible = false end)
 
 switchTab("Start", startTabBtn)
 
 _G.BoatHub_Part1 = { StartPage = StartPage, CirclePage = CirclePage, AutoFarmPage = AutoFarmPage, MainFrame = MainFrame }
+-- // END OF FILE: Part1.lua //
 
 -- =============================================================================
 -- PART 2: DATA TEXTBOX FIELDS & COMPONENT CORRECTION
