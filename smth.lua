@@ -1,5 +1,5 @@
 -- =============================================================================
--- PART 1: MAIN WINDOW & EMBEDDED SIDEBAR GRID
+-- PART 1: CORE CANVAS & GLASSBACK FRAMEWORK
 -- =============================================================================
 local CoreGui = game:GetService("CoreGui")
 
@@ -11,39 +11,25 @@ local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.Name = "BuildABoatToolHub"
 ScreenGui.ResetOnSpawn = false
 
--- Hidden Master Trigger Button
-local ReopenButton = Instance.new("TextButton", ScreenGui)
-ReopenButton.Size = UDim2.new(0, 140, 0, 40)
-ReopenButton.Position = UDim2.new(0, 15, 0.85, 0)
-ReopenButton.Text = "Open Tool Hub"
-ReopenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ReopenButton.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
-ReopenButton.Font = Enum.Font.GothamBold
-ReopenButton.TextSize = 13
-ReopenButton.Visible = false
-Instance.new("UICorner", ReopenButton).CornerRadius = UDim.new(0, 6)
-
--- Main Interface Panel ( Translucent Backdrop Screen Architecture )
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0, 560, 0, 420)
-MainFrame.Position = UDim2.new(0.5, -280, 0.4, -210)
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
-MainFrame.BackgroundTransparency = 0.15 
+MainFrame.Size = UDim2.new(0, 550, 0, 420)
+MainFrame.Position = UDim2.new(0.5, -275, 0.4, -210)
+MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+MainFrame.BackgroundTransparency = 0.15
 MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
 
--- Header Bar Geometry
 local HeaderFrame = Instance.new("Frame", MainFrame)
 HeaderFrame.Size = UDim2.new(1, 0, 0, 50)
-HeaderFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
+HeaderFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
 HeaderFrame.BorderSizePixel = 0
 Instance.new("UICorner", HeaderFrame).CornerRadius = UDim.new(0, 10)
 
 local HeaderFix = Instance.new("Frame", HeaderFrame)
 HeaderFix.Size = UDim2.new(1, 0, 0, 10)
 HeaderFix.Position = UDim2.new(0, 0, 1, -10)
-HeaderFix.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
+HeaderFix.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
 HeaderFix.BorderSizePixel = 0
 
 local TitleLabel = Instance.new("TextLabel", HeaderFrame)
@@ -52,7 +38,7 @@ TitleLabel.Position = UDim2.new(0, 15, 0, 0)
 TitleLabel.Text = "BUILD A BOAT TOOL HUB"
 TitleLabel.TextColor3 = Color3.fromRGB(240, 240, 245)
 TitleLabel.Font = Enum.Font.GothamBold
-TitleLabel.TextSize = 16
+TitleLabel.TextSize = 18
 TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 TitleLabel.BackgroundTransparency = 1
 
@@ -66,14 +52,44 @@ CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.TextSize = 12
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 12)
 
--- EMBEDDED NAVIGATION BAR (Locks the tabs cleanly inside the interior layout)
+local ReopenButton = Instance.new("TextButton", ScreenGui)
+ReopenButton.Size = UDim2.new(0, 140, 0, 40)
+ReopenButton.Position = UDim2.new(0, 15, 0.85, 0)
+ReopenButton.Text = "Open Tool Hub"
+ReopenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ReopenButton.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
+ReopenButton.Font = Enum.Font.GothamBold
+ReopenButton.TextSize = 13
+ReopenButton.Visible = false
+Instance.new("UICorner", ReopenButton).CornerRadius = UDim.new(0, 6)
+
+CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false ReopenButton.Visible = true end)
+ReopenButton.MouseButton1Click:Connect(function() MainFrame.Visible = true ReopenButton.Visible = false end)
+
+_G.BoatHub_Part1 = { MainFrame = MainFrame, ContentContainer = nil, ScreenGui = ScreenGui }
+-- // END OF PART 1 //
+
+-- =============================================================================
+-- PART 2: EMBEDDED SIDEBAR & NAVIGATION SYSTEM
+-- =============================================================================
+local p1 = _G.BoatHub_Part1
+if not p1 then error("Execution Block Broken: Run Part 1 first.") end
+local MainFrame = p1.MainFrame
+
 local SidebarFrame = Instance.new("Frame", MainFrame)
-SidebarFrame.Size = UDim2.new(0, 125, 1, -65) -- Lifted clear off the bottom floor base plate
-SidebarFrame.Position = UDim2.new(0, 12, 0, 55) -- Pinned down inside panel layout matrix
-SidebarFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
-SidebarFrame.BackgroundTransparency = 0.3
+SidebarFrame.Size = UDim2.new(0, 120, 1, -50)
+SidebarFrame.Position = UDim2.new(0, 0, 0, 50)
+SidebarFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+SidebarFrame.BackgroundTransparency = 0.2
 SidebarFrame.BorderSizePixel = 0
-Instance.new("UICorner", SidebarFrame).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", SidebarFrame).CornerRadius = UDim.new(0, 10)
+
+local SidebarFix = Instance.new("Frame", SidebarFrame)
+SidebarFix.Size = UDim2.new(0, 15, 1, 0)
+SidebarFix.Position = UDim2.new(1, -15, 0, 0)
+SidebarFix.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+SidebarFix.BackgroundTransparency = 0.2
+SidebarFix.BorderSizePixel = 0
 
 local NavListLayout = Instance.new("UIListLayout", SidebarFrame)
 NavListLayout.Padding = UDim.new(0, 6)
@@ -81,13 +97,13 @@ NavListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 NavListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
 local NavPadding = Instance.new("UIPadding", SidebarFrame)
-NavPadding.PaddingTop = UDim.new(0, 10)
+NavPadding.PaddingTop = UDim.new(0, 12)
 
--- Content Box Viewport
 local ContentContainer = Instance.new("Frame", MainFrame)
-ContentContainer.Size = UDim2.new(1, -155, 1, -65)
-ContentContainer.Position = UDim2.new(0, 145, 0, 55)
+ContentContainer.Size = UDim2.new(1, -120, 1, -50)
+ContentContainer.Position = UDim2.new(0, 120, 0, 50)
 ContentContainer.BackgroundTransparency = 1
+p1.ContentContainer = ContentContainer
 
 local Pages = {}
 local function createPage(name)
@@ -118,7 +134,7 @@ end
 
 local function addTabButton(text, targetPageName, order)
     local btn = Instance.new("TextButton", SidebarFrame)
-    btn.Size = UDim2.new(0, 110, 0, 34)
+    btn.Size = UDim2.new(0, 100, 0, 32)
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(240, 240, 245)
     btn.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
@@ -134,27 +150,25 @@ local startTabBtn = addTabButton("Hub Home", "Start", 1)
 local circleTabBtn = addTabButton("Circle", "Circle", 2)
 local farmTabBtn = addTabButton("Auto Farm", "AutoFarm", 3)
 
-CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false ReopenButton.Visible = true end)
-ReopenButton.MouseButton1Click:Connect(function() MainFrame.Visible = true ReopenButton.Visible = false end)
-
 switchTab("Start", startTabBtn)
 
-_G.BoatHub_Part1 = { StartPage = StartPage, CirclePage = CirclePage, AutoFarmPage = AutoFarmPage, MainFrame = MainFrame }
--- // END OF FILE: Part1.lua //
+_G.BoatHub_Tabs = { StartPage = StartPage, CirclePage = CirclePage, AutoFarmPage = AutoFarmPage }
+-- // END OF PART 2 //
 
 -- =============================================================================
--- PART 2: UI DATA TEXTBOXES & FIELD INITIALIZATION
+-- PART 3: HOME INTERFACE & CONFIGURATION FIELDS
 -- =============================================================================
-local dataHook = _G.BoatHub_Part1
-if not dataHook then error("Deployment Sync Fault: Part 1 missing.") end
+local tabs = _G.BoatHub_Tabs
+if not tabs then error("Execution Block Broken: Run Part 2 first.") end
 
-local CirclePage = dataHook.CirclePage
-local AutoFarmPage = dataHook.AutoFarmPage
-local StartPage = dataHook.StartPage
+local StartPage = tabs.StartPage
+local CirclePage = tabs.CirclePage
+local AutoFarmPage = tabs.AutoFarmPage
 
+-- Home Layout
 local HomeTitle = Instance.new("TextLabel", StartPage)
-HomeTitle.Size = UDim2.new(1, -20, 0, 30)
-HomeTitle.Position = UDim2.new(0, 10, 0, 15)
+HomeTitle.Size = UDim2.new(1, -30, 0, 30)
+HomeTitle.Position = UDim2.new(0, 15, 0, 20)
 HomeTitle.Text = "Welcome to the Integrated Tool Hub"
 HomeTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 HomeTitle.Font = Enum.Font.GothamBold
@@ -163,21 +177,22 @@ HomeTitle.BackgroundTransparency = 1
 HomeTitle.TextXAlignment = Enum.TextXAlignment.Left
 
 local CopyBox = Instance.new("TextBox", StartPage)
-CopyBox.Size = UDim2.new(1, -20, 0, 36)
-CopyBox.Position = UDim2.new(0, 10, 0, 55)
+CopyBox.Size = UDim2.new(1, -30, 0, 36)
+CopyBox.Position = UDim2.new(0, 15, 0, 60)
 CopyBox.Text = "https://discord.com"
 CopyBox.TextColor3 = Color3.fromRGB(114, 137, 218)
-CopyBox.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
+CopyBox.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
 CopyBox.Font = Enum.Font.GothamBold
 CopyBox.TextSize = 11
 CopyBox.ClearTextOnFocus = false
 CopyBox.TextEditable = false
 Instance.new("UICorner", CopyBox).CornerRadius = UDim.new(0, 6)
 
+-- Inputs Builder
 local function addCircleInput(labelText, yPos, defaultValue, editable)
     local lbl = Instance.new("TextLabel", CirclePage)
     lbl.Size = UDim2.new(0, 150, 0, 26)
-    lbl.Position = UDim2.new(0, 10, 0, yPos)
+    lbl.Position = UDim2.new(0, 15, 0, yPos)
     lbl.Text = labelText
     lbl.TextColor3 = Color3.fromRGB(210, 210, 215)
     lbl.TextSize = 12
@@ -186,11 +201,11 @@ local function addCircleInput(labelText, yPos, defaultValue, editable)
     lbl.Font = Enum.Font.Gotham
     
     local box = Instance.new("TextBox", CirclePage)
-    box.Size = UDim2.new(1, -170, 0, 26)
-    box.Position = UDim2.new(0, 160, 0, yPos)
+    box.Size = UDim2.new(0, 140, 0, 26)
+    box.Position = UDim2.new(0, 175, 0, yPos)
     box.Text = defaultValue
     box.TextColor3 = Color3.fromRGB(255, 255, 255)
-    box.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
+    box.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
     box.Font = Enum.Font.GothamSemibold
     box.TextSize = 12
     box.TextEditable = editable
@@ -198,16 +213,16 @@ local function addCircleInput(labelText, yPos, defaultValue, editable)
     return box
 end
 
-local inputRadius = addCircleInput("Circle Radius / Range:", 15, "20", true)
-local inputSteps = addCircleInput("Total Parts Count:", 45, "30", true)
-local inputSizeY = addCircleInput("Block Height (Y):", 75, "2", true)
-local inputBlockType = addCircleInput("Active Block Type:", 105, "PlasticBlock", true)
-local inputSizeX = addCircleInput("Calculated Width (X):", 135, "0.00", false)
-local inputSizeZ = addCircleInput("Calculated Depth (Z):", 165, "0.00", false)
+local inputRadius = addCircleInput("Circle Radius / Range:", 20, "20", true)
+local inputSteps = addCircleInput("Total Parts Count:", 50, "30", true)
+local inputSizeY = addCircleInput("Block Height (Y):", 80, "2", true)
+local inputBlockType = addCircleInput("Active Block Type:", 110, "PlasticBlock", true)
+local inputSizeX = addCircleInput("Calculated Width (X):", 140, "0.00", false)
+local inputSizeZ = addCircleInput("Calculated Depth (Z):", 170, "0.00", false)
 
 local statusLabel = Instance.new("TextLabel", CirclePage)
-statusLabel.Size = UDim2.new(1, -20, 0, 25)
-statusLabel.Position = UDim2.new(0, 10, 0, 200)
+statusLabel.Size = UDim2.new(1, -30, 0, 25)
+statusLabel.Position = UDim2.new(0, 15, 0, 205)
 statusLabel.Text = "Center Target Block: Not Selected"
 statusLabel.TextColor3 = Color3.fromRGB(240, 90, 90)
 statusLabel.TextSize = 11
@@ -216,8 +231,8 @@ statusLabel.BackgroundTransparency = 1
 
 local function appendCircleButton(text, yPos, color)
     local btn = Instance.new("TextButton", CirclePage)
-    btn.Size = UDim2.new(1, -20, 0, 30)
-    btn.Position = UDim2.new(0, 10, 0, yPos)
+    btn.Size = UDim2.new(1, -30, 0, 30)
+    btn.Position = UDim2.new(0, 15, 0, yPos)
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.TextSize = 11
@@ -227,13 +242,14 @@ local function appendCircleButton(text, yPos, color)
     return btn
 end
 
-local btnSelect = appendCircleButton("Select Center Target Block", 230, Color3.fromRGB(35, 115, 200))
-local btnPreview = appendCircleButton("Hologram Preview Configuration: Disabled", 265, Color3.fromRGB(90, 90, 95))
-local btnBuild = appendCircleButton("Commence Circle Construction", 300, Color3.fromRGB(45, 140, 85))
+local btnSelect = appendCircleButton("Select Center Target Block", 235, Color3.fromRGB(35, 115, 200))
+local btnPreview = appendCircleButton("Hologram Preview Configuration: Disabled", 270, Color3.fromRGB(90, 90, 95))
+local btnBuild = appendCircleButton("Commence Circle Construction", 305, Color3.fromRGB(45, 140, 85))
 
+-- Auto Farm Setup Fields
 local FarmTitle = Instance.new("TextLabel", AutoFarmPage)
-FarmTitle.Size = UDim2.new(1, -20, 0, 25)
-FarmTitle.Position = UDim2.new(0, 10, 0, 15)
+FarmTitle.Size = UDim2.new(1, -30, 0, 25)
+FarmTitle.Position = UDim2.new(0, 15, 0, 15)
 FarmTitle.Text = "Automated Stage Progression Farm"
 FarmTitle.TextColor3 = Color3.fromRGB(240, 240, 245)
 FarmTitle.Font = Enum.Font.GothamBold
@@ -242,8 +258,8 @@ FarmTitle.BackgroundTransparency = 1
 FarmTitle.TextXAlignment = Enum.TextXAlignment.Left
 
 local ToggleBtn = Instance.new("TextButton", AutoFarmPage)
-ToggleBtn.Size = UDim2.new(1, -20, 0, 40)
-ToggleBtn.Position = UDim2.new(0, 10, 0, 45)
+ToggleBtn.Size = UDim2.new(1, -30, 0, 40)
+ToggleBtn.Position = UDim2.new(0, 15, 0, 45)
 ToggleBtn.Text = "Auto Farm: OFF"
 ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleBtn.Font = Enum.Font.GothamBold
@@ -254,7 +270,7 @@ Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 6)
 local function addFarmConfigField(labelText, yPos, defaultValue)
     local lbl = Instance.new("TextLabel", AutoFarmPage)
     lbl.Size = UDim2.new(0, 180, 0, 26)
-    lbl.Position = UDim2.new(0, 10, 0, yPos)
+    lbl.Position = UDim2.new(0, 15, 0, yPos)
     lbl.Text = labelText
     lbl.TextColor3 = Color3.fromRGB(210, 210, 215)
     lbl.TextSize = 12
@@ -263,11 +279,11 @@ local function addFarmConfigField(labelText, yPos, defaultValue)
     lbl.Font = Enum.Font.Gotham
     
     local box = Instance.new("TextBox", AutoFarmPage)
-    box.Size = UDim2.new(1, -200, 0, 26)
-    box.Position = UDim2.new(0, 190, 0, yPos)
+    box.Size = UDim2.new(1, -230, 0, 26)
+    box.Position = UDim2.new(0, 205, 0, yPos)
     box.Text = defaultValue
     box.TextColor3 = Color3.fromRGB(255, 255, 255)
-    box.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
+    box.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
     box.Font = Enum.Font.GothamSemibold
     box.TextSize = 12
     Instance.new("UICorner", box).CornerRadius = UDim.new(0, 5)
@@ -278,57 +294,59 @@ local inputSpeed = addFarmConfigField("Teleport Speed Delay (s):", 100, "1.5")
 local inputWebhook = addFarmConfigField("Discord Webhook URL Addon:", 135, "")
 local inputWebInterval = addFarmConfigField("Webhook Send Interval (Loops):", 170, "5")
 
+-- Privacy Label Addon
 local DisclaimerLabel = Instance.new("TextLabel", AutoFarmPage)
-DisclaimerLabel.Size = UDim2.new(1, -20, 0, 45)
-DisclaimerLabel.Position = UDim2.new(0, 10, 0, 205)
-DisclaimerLabel.Text = "* Privacy Notice: All webhooks are processed purely on the local client side. Your webhook URL code values are private and never shared or saved externally."
-DisclaimerLabel.TextColor3 = Color3.fromRGB(160, 160, 165)
+DisclaimerLabel.Size = UDim2.new(1, -30, 0, 35)
+DisclaimerLabel.Position = UDim2.new(0, 15, 0, 205)
+DisclaimerLabel.Text = "* Privacy Notice: All webhooks are processed purely on the local client side. Your webhook URL is never saved, transmitted externally, or shared."
+DisclaimerLabel.TextColor3 = Color3.fromRGB(165, 165, 170)
 DisclaimerLabel.TextSize = 10
 DisclaimerLabel.Font = Enum.Font.GothamItalic
 DisclaimerLabel.TextWrapped = true
 DisclaimerLabel.BackgroundTransparency = 1
 DisclaimerLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-_G.BoatHub_Part2 = {
+_G.BoatHub_Inputs = {
     inputRadius = inputRadius, inputSteps = inputSteps, inputSizeY = inputSizeY,
     inputBlockType = inputBlockType, inputSizeX = inputSizeX, inputSizeZ = inputSizeZ,
     statusLabel = statusLabel, btnSelect = btnSelect, btnPreview = btnPreview, btnBuild = btnBuild,
     inputSpeed = inputSpeed, inputWebhook = inputWebhook, inputWebInterval = inputWebInterval, ToggleBtn = ToggleBtn
 }
--- // END OF FILE: Part2.lua //
+-- // END OF PART 3 //
 
 -- =============================================================================
--- PART 3: INVENTORY SYNC MODULE
+-- PART 4: MATERIAL SYNC DRAWER MATRIX
 -- =============================================================================
-local hook1 = _G.BoatHub_Part1
-local hook2 = _G.BoatHub_Part2
-if not hook1 or not hook2 then error("Deployment Sync Fault: Part 2 elements missing.") end
+local tabs = _G.BoatHub_Tabs
+local inputs = _G.BoatHub_Inputs
+if not tabs or not inputs then error("Execution Block Broken: Run Part 3 first.") end
 
-local CirclePage = hook1.CirclePage
-local inputBlockType = hook2.inputBlockType
-local dataFolder = game:GetService("Players").LocalPlayer:WaitForChild("Data", 5)
+local CirclePage = tabs.CirclePage
+local inputBlockType = inputs.inputBlockType
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local dataFolder = LocalPlayer:WaitForChild("Data", 5)
 
 local BlockPanel = Instance.new("Frame", CirclePage)
-BlockPanel.Size = UDim2.new(1, -20, 0, 150)
-BlockPanel.Position = UDim2.new(0, 10, 0, 140)
-BlockPanel.BackgroundColor3 = Color3.fromRGB(28, 28, 32)
+BlockPanel.Size = UDim2.new(1, -30, 0, 180)
+BlockPanel.Position = UDim2.new(0, 15, 0, 160)
+BlockPanel.BackgroundColor3 = Color3.fromRGB(34, 34, 38)
 BlockPanel.ZIndex = 5
 BlockPanel.Visible = false
-Instance.new("UICorner", BlockPanel).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", BlockPanel).CornerRadius = UDim.new(0, 10)
 
 local PanelTitle = Instance.new("TextLabel", BlockPanel)
-PanelTitle.Size = UDim2.new(1, 0, 0, 26)
-PanelTitle.Text = "AVAILABLE MATERIALS"
+PanelTitle.Size = UDim2.new(1, 0, 0, 30)
+PanelTitle.Text = "AVAILABLE BUILDING MATERIALS"
 PanelTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 PanelTitle.Font = Enum.Font.GothamBold
-PanelTitle.BackgroundColor3 = Color3.fromRGB(38, 38, 44)
-PanelTitle.TextSize = 10
+PanelTitle.BackgroundColor3 = Color3.fromRGB(44, 44, 50)
+PanelTitle.TextSize = 11
 
 local ScrollingFrame = Instance.new("ScrollingFrame", BlockPanel)
-ScrollingFrame.Size = UDim2.new(1, -16, 1, -32)
-ScrollingFrame.Position = UDim2.new(0, 8, 0, 28)
+ScrollingFrame.Size = UDim2.new(1, -20, 1, -40)
+ScrollingFrame.Position = UDim2.new(0, 10, 0, 35)
 ScrollingFrame.BackgroundTransparency = 1
-ScrollingFrame.ScrollBarThickness = 2
+ScrollingFrame.ScrollBarThickness = 4
 ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
 local UIListLayout = Instance.new("UIListLayout", ScrollingFrame)
@@ -340,14 +358,15 @@ inputBlockType.Focused:Connect(function() BlockPanel.Visible = true end)
 local function updateInventoryLayout()
     for _, child in ipairs(ScrollingFrame:GetChildren()) do if child:IsA("TextButton") then child:Destroy() end end
     if not dataFolder then return end
+    
     for _, item in ipairs(dataFolder:GetChildren()) do
         if item:IsA("ValueBase") and item.Value > 0 and not string.find(item.Name, "Tool") then
             local itemBtn = Instance.new("TextButton", ScrollingFrame)
-            itemBtn.Size = UDim2.new(1, -4, 0, 24)
+            itemBtn.Size = UDim2.new(1, -5, 0, 26)
             itemBtn.Text = " " .. item.Name .. " (" .. tostring(item.Value) .. ")"
             itemBtn.TextColor3 = Color3.fromRGB(190, 190, 195)
-            itemBtn.BackgroundColor3 = Color3.fromRGB(38, 38, 44)
-            itemBtn.Font = Enum.Font.GothamByLetter
+            itemBtn.BackgroundColor3 = Color3.fromRGB(44, 44, 50)
+            itemBtn.Font = Enum.Font.GothamSemibold
             itemBtn.TextSize = 11
             itemBtn.TextXAlignment = Enum.TextXAlignment.Left
             Instance.new("UICorner", itemBtn).CornerRadius = UDim.new(0, 4)
@@ -366,23 +385,21 @@ if dataFolder then
     dataFolder.ChildAdded:Connect(updateInventoryLayout)
     dataFolder.ChildRemoved:Connect(updateInventoryLayout)
 end
-
-_G.BoatHub_Part3 = { dataFolder = dataFolder }
--- // END OF FILE: Part3.lua //
+-- // END OF PART 4 //
 
 -- =============================================================================
--- PART 4: BLUEPRINT RENDER MATRIX
+-- PART 5: BLUEPRINT RENDERING & NETWORK CORES
 -- =============================================================================
-local hook1 = _G.BoatHub_Part1
-local hook2 = _G.BoatHub_Part2
-if not hook1 or not hook2 then error("Deployment Sync Fault: Part 3 dependencies broke.") end
+local inputs = _G.BoatHub_Inputs
+if not inputs then error("Execution Block Broken: Run Part 3 first.") end
 
 local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 local LocalPlayer = game:GetService("Players").LocalPlayer
+local dataFolder = LocalPlayer:WaitForChild("Data", 5)
 
-local inputRadius, inputSteps, inputSizeY, inputSizeX, inputSizeZ = hook2.inputRadius, hook2.inputSteps, hook2.inputSizeY, hook2.inputSizeX, hook2.inputSizeZ
-local statusLabel, btnSelect, btnPreview = hook2.statusLabel, hook2.btnSelect, hook2.btnPreview
+local inputRadius, inputSteps, inputSizeY, inputBlockType, inputSizeX, inputSizeZ = inputs.inputRadius, inputs.inputSteps, inputs.inputSizeY, inputs.inputBlockType, inputs.inputSizeX, inputs.inputSizeZ
+local statusLabel, btnSelect, btnPreview, btnBuild = inputs.statusLabel, inputs.btnSelect, inputs.btnPreview, inputs.btnBuild
 
 local previewFolder = workspace:FindFirstChild("CirclePreviewFolder") or Instance.new("Folder", workspace)
 previewFolder.Name = "CirclePreviewFolder"
@@ -444,27 +461,9 @@ end)
 btnPreview.MouseButton1Click:Connect(function()
     _G.CBuilder_LivePreview = not _G.CBuilder_LivePreview
     btnPreview.Text = _G.CBuilder_LivePreview and "Preview Configuration: Active" or "Preview Configuration: Disabled"
-    btnPreview.BackgroundColor3 = _G.CBuilder_LivePreview and Color3.fromRGB(155, 80, 180) or Color3.fromRGB(90, 90, 95)
+    btnPreview.BackgroundColor3 = _G.CBuilder_LivePreview and Color3.fromRGB(155, 80, 180) or Color3.fromRGB(110, 110, 115)
     updateRingVisuals()
 end)
-
-_G.BoatHub_Part4 = { previewFolder = previewFolder }
--- // END OF FILE: Part4.lua //
-
--- =============================================================================
--- PART 5: SERVER PLACEMENT NETWORK REPLICATOR
--- =============================================================================
-local hook1 = _G.BoatHub_Part1
-local hook2 = _G.BoatHub_Part2
-local hook3 = _G.BoatHub_Part3
-local hook4 = _G.BoatHub_Part4
-if not hook1 or not hook2 or not hook3 or not hook4 then error("Deployment Sync Fault: Part 4 pipelines broke.") end
-
-local LocalPlayer = game:GetService("Players").LocalPlayer
-local inputRadius, inputSteps, inputSizeY, inputBlockType = hook2.inputRadius, hook2.inputSteps, hook2.inputSizeY, hook2.inputBlockType
-local statusLabel, btnBuild = hook2.statusLabel, hook2.btnBuild
-local dataFolder = hook3.dataFolder
-local previewFolder = hook4.previewFolder
 
 local folder = workspace:WaitForChild("Blocks", 5):WaitForChild(LocalPlayer.Name, 5)
 
@@ -518,33 +517,170 @@ btnBuild.MouseButton1Click:Connect(function()
     statusLabel.Text = "Matrix Sequence Completed!"
     statusLabel.TextColor3 = Color3.fromRGB(80, 240, 80)
 end)
--- // END OF FILE: Part5.lua //
+-- // END OF PART 5 //
 
 -- =============================================================================
--- PART 6: AUTO-FARM ENGINE & WEBHOOK LOGGER
+-- PART 6: AUTOMATED AUTO-FARM ENGINE WITH WEBHOOK DISPATCHER
 -- =============================================================================
-local hook1 = _G.BoatHub_Part1
-local hook2 = _G.BoatHub_Part2
-if not hook1 or not hook2 then error("Deployment Sync Fault: Framework hooks lost.") end
+local core = _G.BoatHub_Part1
+local inputs = _G.BoatHub_Part2
+if not core or not inputs then error("Deployment Fault: Dependency chain to global window metrics broken.") end
 
 local Workspace = game:GetService("Workspace")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local HttpService = game:GetService("HttpService")
 
-local inputSpeed = hook2.inputSpeed
-local inputWebhook = hook2.inputWebhook
-local inputWebInterval = hook2.inputWebInterval
-local ToggleBtn = hook2.ToggleBtn
+-- Pull tracking configurations from Part 2 layout allocation matrix
+local inputSpeed = inputs.inputSpeed
+local inputWebhook = inputs.inputWebhook
+local inputWebInterval = inputs.inputWebInterval
+local ToggleBtn = inputs.ToggleBtn
 
+-- Runtime Internal Tracker States
 local toggled, platform, loopThreadActive = false, nil, false
 local totalLoopsCompleted = 0
 local initialGoldValue = 0
 
+-- Cache base tracking records safely from the data path
 local goldValueObject = LocalPlayer:WaitForChild("Data", 5) and LocalPlayer.Data:WaitForChild("Gold", 5)
 if goldValueObject then initialGoldValue = goldValueObject.Value end
 
+-- Dispatches formatted telemetry embeds across external channel streams safely
 local function sendWebhookUpdate()
     local url = tostring(inputWebhook.Text)
     if url == "" or not string.find(url, "://discord.com") then return end
     
+    local currentGold = goldValueObject and goldValueObject.Value or 0
+    local goldEarned = currentGold - initialGoldValue
     
+    local payloadData = {
+        username = "Tool Hub Tracker",
+        embeds = {{
+            title = "Auto Farm Progress Update",
+            color = 3066993, -- Cyan Highlight
+            fields = {
+                {name = "Local Account Profile", value = "`" .. LocalPlayer.Name .. "`", inline = true},
+                {name = "Loops Documented", value = "`" .. tostring(totalLoopsCompleted) .. "`", inline = true},
+                {name = "Net Profits Generated", value = "`" .. tostring(goldEarned) .. " Gold`", inline = false},
+                {name = "Current Ledger Balance", value = "`" .. tostring(currentGold) .. " Gold`", inline = true}
+            },
+            footer = {text = "Automated Hub Log Distribution Systems"}
+        }}
+    }
+    
+    task.spawn(function()
+        pcall(function()
+            -- Multi-exploit request validation protocol compatibility layer
+            local request = syn and syn.request or http and http.request or http_request or request
+            if request then
+                request({
+                    Url = url,
+                    Method = "POST",
+                    Headers = {["Content-Type"] = "application/json"},
+                    Body = HttpService:JSONEncode(payloadData)
+                })
+            end
+        end)
+    end)
+end
+
+local function managePlatform(cframe)
+    if not toggled then return end
+    if not platform or not platform.Parent then
+        platform = Instance.new("Part")
+        platform.Name = "AntiFallPlatform"
+        platform.Size = Vector3.new(12, 1, 12)
+        platform.Material = Enum.Material.Glass
+        platform.Transparency = 0.5
+        platform.Color = Color3.fromRGB(0, 255, 255)
+        platform.Anchored = true
+        platform.CanCollide = true
+        platform.Parent = Workspace
+    end
+    platform.CFrame = cframe * CFrame.new(0, -3.5, 0)
+end
+
+local function removePlatform() if platform then platform:Destroy() platform = nil end end
+local function isCharacterReady()
+    local char = LocalPlayer.Character
+    local hum = char and char:FindFirstChildOfClass("Humanoid")
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    return char and hum and hrp and hum.Health > 0
+end
+
+-- Teleport Sequence Loop Layer
+local function runFarmCycle()
+    if not toggled or loopThreadActive then return end
+    loopThreadActive = true
+    local normalStages = Workspace:FindFirstChild("BoatStages") and Workspace.BoatStages:FindFirstChild("NormalStages")
+    if not normalStages then loopThreadActive = false return end
+    
+    -- Dynamically track user execution speeds configured in your UI fields
+    local speedDelay = tonumber(inputSpeed.Text) or 1.5
+    
+    for i = 1, 10 do
+        if not toggled or not isCharacterReady() then break end
+        local currentStage = normalStages:FindFirstChild("CaveStage" .. i)
+        local targetPart = currentStage and currentStage:FindFirstChild("DarknessPart")
+        if targetPart then
+            ToggleBtn.Text = "Traveling: Stage " .. i
+            managePlatform(targetPart.CFrame)
+            LocalPlayer.Character.HumanoidRootPart.CFrame = targetPart.CFrame
+        end
+        task.wait(speedDelay)
+    end
+    
+    if toggled and isCharacterReady() then
+        local endStage = normalStages:FindFirstChild("TheEnd")
+        local chestTrigger = endStage and endStage:FindFirstChild("GoldenChest") and endStage.GoldenChest:FindFirstChild("Trigger")
+        if chestTrigger then
+            ToggleBtn.Text = "Opening Chest..."
+            managePlatform(chestTrigger.CFrame)
+            LocalPlayer.Character.HumanoidRootPart.CFrame = chestTrigger.CFrame
+        end
+        task.wait(4)
+        removePlatform()
+        ToggleBtn.Text = "Resetting..."
+        
+        -- Increment tracking metrics
+        totalLoopsCompleted = totalLoopsCompleted + 1
+        
+        -- Pull intervals parameter to test against webhook distribution windows
+        local targetInterval = tonumber(inputWebInterval.Text) or 5
+        if totalLoopsCompleted % targetInterval == 0 then
+            sendWebhookUpdate()
+        end
+    end
+    loopThreadActive = false
+end
+
+-- Ignition listeners executing scripts perfectly upon landing back at spawn
+LocalPlayer.CharacterAdded:Connect(function()
+    if toggled then
+        for cooldown = 6, 1, -1 do
+            if not toggled then break end
+            ToggleBtn.Text = "Starting in " .. cooldown .. "s..."
+            task.wait(1)
+        end
+        local claimRemote = Workspace:FindFirstChild("ClaimRiverResultsGold")
+        if claimRemote then claimRemote:FireServer() end
+        if toggled and isCharacterReady() then task.spawn(runFarmCycle) end
+    end
+end)
+
+-- Button Interaction Connection
+ToggleBtn.MouseButton1Click:Connect(function()
+    toggled = not toggled
+    if toggled then
+        ToggleBtn.Text = "Auto Farm: ON"
+        ToggleBtn.BackgroundColor3 = Color3.fromRGB(45, 140, 85) -- Smooth Green Theme Accent
+        if isCharacterReady() then task.spawn(runFarmCycle) end
+    else
+        ToggleBtn.Text = "Auto Farm: OFF"
+        ToggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+        removePlatform()
+    end
+end)
+
+LocalPlayer.CharacterRemoving:Connect(removePlatform)
+-- // END OF FILE: Part_6.lua //
