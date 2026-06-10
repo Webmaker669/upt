@@ -248,7 +248,7 @@ local btnSelect = appendCircleButton("Select Center Block", 235, Color3.fromRGB(
 local btnPreview = appendCircleButton("Hologram Preview: Off", 270, Color3.fromRGB(90, 90, 95))
 local btnBuild = appendCircleButton("Build Circle", 305, Color3.fromRGB(45, 140, 85))
 
--- AutoFarm Panel Configuration Fields (Renamed To One Word)
+-- AutoFarm Panel Configuration Fields
 local FarmTitle = Instance.new("TextLabel", AutoFarmPage)
 FarmTitle.Size = UDim2.new(1, -30, 0, 25)
 FarmTitle.Position = UDim2.new(0, 15, 0, 15)
@@ -294,7 +294,7 @@ end
 
 local inputSpeed = addFarmField("Teleport Delay (seconds):", 100, "1.5")
 local inputWebhook = addFarmField("Discord Webhook URL Addon:", 135, "")
-local inputWebInterval = addFarmField("Send Update Every X Spawns:", 170, "1") -- Restored notification field
+local inputWebInterval = addFarmField("Send Update Every X Spawns:", 170, "1")
 
 -- Privacy Label Addon
 local DisclaimerLabel = Instance.new("TextLabel", AutoFarmPage)
@@ -668,12 +668,19 @@ local function runFarmCycle()
         local endStage = normalStages:FindFirstChild("TheEnd")
         local chestTrigger = endStage and endStage:FindFirstChild("GoldenChest") and endStage.GoldenChest:FindFirstChild("Trigger")
         if chestTrigger then
-            ToggleBtn.Text = "Grabbing chest..."
+            ToggleBtn.Text = "Arrived at chest..."
             managePlatform(chestTrigger.CFrame)
             LocalPlayer.Character.HumanoidRootPart.CFrame = chestTrigger.CFrame
         end
         
-        task.wait(4)
+        -- FIXED: Waits 3 seconds upon arrival before touching the chest and resetting
+        task.wait(3)
+        
+        if toggled and isCharacterReady() then
+            ToggleBtn.Text = "Grabbing chest rewards..."
+            task.wait(4)
+        end
+        
         removePlatform()
         totalLoopsCompleted = totalLoopsCompleted + 1
         
@@ -698,7 +705,6 @@ local function setupSpawnDetection(character)
             if not webhookSentForThisSpawn then
                 webhookSentForThisSpawn = true
                 
-                -- Pull interval counter constraint numbers typed by the user
                 local targetInterval = tonumber(inputWebInterval.Text) or 1
                 if totalLoopsCompleted % targetInterval == 0 and totalLoopsCompleted > 0 then
                     sendWebhookUpdate()
@@ -742,6 +748,7 @@ ToggleBtn.MouseButton1Click:Connect(function()
 end)
 LocalPlayer.CharacterRemoving:Connect(removePlatform)
 -- // END OF FILE: Part6.lua //
+
 
 
 
