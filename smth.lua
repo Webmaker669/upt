@@ -146,37 +146,59 @@ switchTab("Start", startTabBtn)
 _G.BoatHub_Part1 = { StartPage = StartPage, CirclePage = CirclePage, AutoFarmPage = AutoFarmPage, MainFrame = MainFrame }
 
 -- =============================================================================
--- PART 2: UI DATA TEXTBOXES & FIELD INITIALIZATION
+-- PART 2: DATA TEXTBOXES & INTEGRATED CLIPBOARD SYSTEM
 -- =============================================================================
 local dataHook = _G.BoatHub_Part1
-if not dataHook then error("Part 2 missing initialization hook from Part 1.") end
+if not dataHook then error("Missing Hook: Part 1 layout wasn't found in game memory.") end
 
 local CirclePage = dataHook.CirclePage
 local AutoFarmPage = dataHook.AutoFarmPage
 local StartPage = dataHook.StartPage
 
+-- Home Page Title
 local HomeTitle = Instance.new("TextLabel", StartPage)
 HomeTitle.Size = UDim2.new(1, -30, 0, 30)
 HomeTitle.Position = UDim2.new(0, 15, 0, 20)
-HomeTitle.Text = "Welcome to the Integrated Tool Hub"
+HomeTitle.Text = "Welcome to the hub!"
 HomeTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 HomeTitle.Font = Enum.Font.GothamBold
-HomeTitle.TextSize = 15
+HomeTitle.TextSize = 16
 HomeTitle.BackgroundTransparency = 1
 HomeTitle.TextXAlignment = Enum.TextXAlignment.Left
 
-local CopyBox = Instance.new("TextBox", StartPage)
+-- Interactive Click-To-Copy Link Button
+local CopyBox = Instance.new("TextButton", StartPage)
 CopyBox.Size = UDim2.new(1, -30, 0, 36)
 CopyBox.Position = UDim2.new(0, 15, 0, 60)
-CopyBox.Text = "https://discord.com"
-CopyBox.TextColor3 = Color3.fromRGB(114, 137, 218)
-CopyBox.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+CopyBox.Text = "Click here to copy the Discord Invite Link!"
+CopyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+CopyBox.BackgroundColor3 = Color3.fromRGB(88, 101, 242) -- Discord Blurple
 CopyBox.Font = Enum.Font.GothamBold
-CopyBox.TextSize = 11
-CopyBox.ClearTextOnFocus = false
-CopyBox.TextEditable = false
+CopyBox.TextSize = 12
 Instance.new("UICorner", CopyBox).CornerRadius = UDim.new(0, 6)
 
+-- Clipboard Hook Action Listener
+CopyBox.MouseButton1Click:Connect(function()
+    local inviteUrl = "https://discord.com/invite/3xCwTAYhXe"
+    
+    -- Universal compatibility checker across mobile executors
+    if setclipboard then
+        setclipboard(inviteUrl)
+    elseif toclipboard then
+        toclipboard(inviteUrl)
+    elseif Clipboard and Clipboard.set then
+        Clipboard.set(inviteUrl)
+    end
+    
+    -- Visual click indicator
+    CopyBox.Text = "Copied link to clipboard!"
+    CopyBox.BackgroundColor3 = Color3.fromRGB(46, 139, 87)
+    task.wait(2)
+    CopyBox.Text = "Click here to copy the Discord Invite Link!"
+    CopyBox.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+end)
+
+-- Circle Configuration Inputs Builder
 local function addCircleInput(labelText, yPos, defaultValue, editable)
     local lbl = Instance.new("TextLabel", CirclePage)
     lbl.Size = UDim2.new(0, 150, 0, 26)
@@ -201,19 +223,19 @@ local function addCircleInput(labelText, yPos, defaultValue, editable)
     return box
 end
 
-local inputRadius = addCircleInput("Circle Radius / Range:", 20, "20", true)
-local inputSteps = addCircleInput("Total Parts Count:", 50, "30", true)
-local inputSizeY = addCircleInput("Block Height (Y):", 80, "2", true)
-local inputBlockType = addCircleInput("Active Block Type:", 110, "PlasticBlock", true)
-local inputSizeX = addCircleInput("Calculated Width (X):", 140, "0.00", false)
-local inputSizeZ = addCircleInput("Calculated Depth (Z):", 170, "0.00", false)
+local inputRadius = addCircleInput("Radius:", 20, "20", true)
+local inputSteps = addCircleInput("Parts count:", 50, "30", true)
+local inputSizeY = addCircleInput("Block height (Y):", 80, "2", true)
+local inputBlockType = addCircleInput("Block type:", 110, "PlasticBlock", true)
+local inputSizeX = addCircleInput("Width (X):", 140, "0.00", false)
+local inputSizeZ = addCircleInput("Depth (Z):", 170, "0.00", false)
 
 local statusLabel = Instance.new("TextLabel", CirclePage)
 statusLabel.Size = UDim2.new(1, -30, 0, 25)
 statusLabel.Position = UDim2.new(0, 15, 0, 205)
-statusLabel.Text = "Center Target Block: Not Selected"
+statusLabel.Text = "Center block: None selected"
 statusLabel.TextColor3 = Color3.fromRGB(240, 90, 90)
-statusLabel.TextSize = 11
+statusLabel.TextSize = 12
 statusLabel.Font = Enum.Font.GothamSemibold
 statusLabel.BackgroundTransparency = 1
 
@@ -223,21 +245,22 @@ local function appendCircleButton(text, yPos, color)
     btn.Position = UDim2.new(0, 15, 0, yPos)
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 11
+    btn.TextSize = 12
     btn.Font = Enum.Font.GothamBold
     btn.BackgroundColor3 = color
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 5)
     return btn
 end
 
-local btnSelect = appendCircleButton("Select Center Target Block", 235, Color3.fromRGB(35, 115, 200))
-local btnPreview = appendCircleButton("Hologram Preview Configuration: Disabled", 270, Color3.fromRGB(90, 90, 95))
-local btnBuild = appendCircleButton("Commence Circle Construction", 305, Color3.fromRGB(45, 140, 85))
+local btnSelect = appendCircleButton("Select Center Block", 235, Color3.fromRGB(35, 115, 200))
+local btnPreview = appendCircleButton("Hologram Preview: Off", 270, Color3.fromRGB(90, 90, 95))
+local btnBuild = appendCircleButton("Build Circle", 305, Color3.fromRGB(45, 140, 85))
 
+-- Auto Farm Panel Configuration Fields
 local FarmTitle = Instance.new("TextLabel", AutoFarmPage)
 FarmTitle.Size = UDim2.new(1, -30, 0, 25)
 FarmTitle.Position = UDim2.new(0, 15, 0, 15)
-FarmTitle.Text = "Automated Stage Progression Farm"
+FarmTitle.Text = "Auto Stage Farm Settings"
 FarmTitle.TextColor3 = Color3.fromRGB(240, 240, 245)
 FarmTitle.Font = Enum.Font.GothamBold
 FarmTitle.TextSize = 14
@@ -254,7 +277,7 @@ ToggleBtn.TextSize = 14
 ToggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 6)
 
-local function addFarmConfigField(labelText, yPos, defaultValue)
+local function addFarmField(labelText, yPos, defaultValue)
     local lbl = Instance.new("TextLabel", AutoFarmPage)
     lbl.Size = UDim2.new(0, 180, 0, 26)
     lbl.Position = UDim2.new(0, 15, 0, yPos)
@@ -277,14 +300,15 @@ local function addFarmConfigField(labelText, yPos, defaultValue)
     return box
 end
 
-local inputSpeed = addFarmConfigField("Teleport Speed Delay (s):", 100, "1.5")
-local inputWebhook = addFarmConfigField("Discord Webhook URL Addon:", 135, "")
-local inputWebInterval = addFarmConfigField("Webhook Send Interval (Loops):", 170, "5")
+local inputSpeed = addFarmField("Teleport Delay (seconds):", 100, "1.5")
+local inputWebhook = addFarmField("Discord Webhook URL:", 135, "")
+local inputWebInterval = addFarmField("Send Update Every X Loops:", 170, "5")
 
+-- Privacy Label Addon
 local DisclaimerLabel = Instance.new("TextLabel", AutoFarmPage)
 DisclaimerLabel.Size = UDim2.new(1, -30, 0, 30)
 DisclaimerLabel.Position = UDim2.new(0, 15, 0, 205)
-DisclaimerLabel.Text = "* Privacy Notice: All webhooks are processed purely on the local client side. Your webhook URL is never saved, transmitted externally, or shared."
+DisclaimerLabel.Text = "* Privacy Note: Your webhooks are handled completely on your own device. They are never saved, tracked, or shared."
 DisclaimerLabel.TextColor3 = Color3.fromRGB(165, 165, 170)
 DisclaimerLabel.TextSize = 10
 DisclaimerLabel.Font = Enum.Font.SourceSans
@@ -292,6 +316,7 @@ DisclaimerLabel.TextWrapped = true
 DisclaimerLabel.BackgroundTransparency = 1
 DisclaimerLabel.TextXAlignment = Enum.TextXAlignment.Left
 
+-- Export Environment Globals to memory
 _G.CBuilder_SpeedBox = inputSpeed
 _G.CBuilder_WebhookBox = inputWebhook
 _G.CBuilder_IntervalBox = inputWebInterval
@@ -302,6 +327,7 @@ _G.BoatHub_Part2 = {
     inputBlockType = inputBlockType, inputSizeX = inputSizeX, inputSizeZ = inputSizeZ,
     statusLabel = statusLabel, btnSelect = btnSelect, btnPreview = btnPreview, btnBuild = btnBuild
 }
+-- // END OF FILE: Part2.lua //
 
 -- =============================================================================
 -- PART 3: INVENTORY TRACKING DRAWER INTERFACE
@@ -546,57 +572,49 @@ end)
 -- PART 6: AUTOMATED AUTO-FARM ENGINE WITH WEBHOOK DISPATCHER
 -- =============================================================================
 local core = _G.BoatHub_Part1
-if not core then error("Sequence Interrupted: Part 6 cannot locate Part 1 initialization canvas handles.") end
+if not core then error("Sequence Interrupted: Main UI layout missing.") end
 
 local Workspace = game:GetService("Workspace")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local HttpService = game:GetService("HttpService")
 
--- Direct static pointer fetches from our global storage variable hooks
 local inputSpeed = _G.CBuilder_SpeedBox
 local inputWebhook = _G.CBuilder_WebhookBox
 local inputWebInterval = _G.CBuilder_IntervalBox
 local ToggleBtn = _G.CBuilder_FarmToggle
 
-if not inputSpeed or not inputWebhook or not ToggleBtn then
-    error("Part 6 Global Error: Part 2 interface configuration fields could not be found in memory.")
-end
-
 local toggled, platform, loopThreadActive = false, nil, false
 local totalLoopsCompleted = 0
 local initialGoldValue = 0
 
--- Cache base tracking records safely from local player currency database path
 local goldValueObject = LocalPlayer:WaitForChild("Data", 5) and LocalPlayer.Data:WaitForChild("Gold", 5)
 if goldValueObject then initialGoldValue = goldValueObject.Value end
 
--- Dispatches statistical tracking profiles across external channel streams securely
 local function sendWebhookUpdate()
     local url = tostring(inputWebhook.Text)
-    -- If the webhook box is left blank or does not contain a standard address string, skip it
     if url == "" or not string.find(url, "://discord.com") then return end
     
     local currentGold = goldValueObject and goldValueObject.Value or 0
     local goldEarned = currentGold - initialGoldValue
     
+    -- Relaxed, clean layout structure for logging
     local payloadData = {
-        username = "Tool Hub Tracker",
+        username = "Boat Hub Logger",
         embeds = {{
-            title = "Auto Farm Progress Update",
-            color = 3066993, -- Light Cyan Highlight
+            title = "Auto Farm Status Report",
+            color = 3066993,
             fields = {
-                {name = "Local Account Profile", value = "`" .. LocalPlayer.Name .. "`", inline = true},
-                {name = "Loops Documented", value = "`" .. tostring(totalLoopsCompleted) .. "`", inline = true},
-                {name = "Net Profits Generated", value = "`" .. tostring(goldEarned) .. " Gold`", inline = false},
-                {name = "Current Ledger Balance", value = "`" .. tostring(currentGold) .. " Gold`", inline = true}
+                {name = "User", value = "`" .. LocalPlayer.Name .. "`", inline = true},
+                {name = "Loops Done", value = "`" .. tostring(totalLoopsCompleted) .. "`", inline = true},
+                {name = "Gold Made This Run", value = "`+ " .. tostring(goldEarned) .. " Gold`", inline = false},
+                {name = "Total Gold Balance", value = "`" .. tostring(currentGold) .. " Gold`", inline = true}
             },
-            footer = {text = "Automated Hub Log Distribution Systems"}
+            footer = {text = "Live Tracking Session Data"}
         }}
     }
     
     task.spawn(function()
         pcall(function()
-            -- Multi-exploit request structure validation protocol compatibility layer
             local request = syn and syn.request or http and http.request or http_request or request
             if request then
                 request({
@@ -627,7 +645,6 @@ local function managePlatform(cframe)
 end
 
 local function removePlatform() if platform then platform:Destroy() platform = nil end end
-
 local function isCharacterReady()
     local char = LocalPlayer.Character
     local hum = char and char:FindFirstChildOfClass("Humanoid")
@@ -635,14 +652,12 @@ local function isCharacterReady()
     return char and hum and hrp and hum.Health > 0
 end
 
--- Teleport Pipeline Sequence Execution Core Loops
 local function runFarmCycle()
     if not toggled or loopThreadActive then return end
     loopThreadActive = true
     local normalStages = Workspace:FindFirstChild("BoatStages") and Workspace.BoatStages:FindFirstChild("NormalStages")
     if not normalStages then loopThreadActive = false return end
     
-    -- Dynamically calculate pace thresholds specified in your UI config fields
     local speedDelay = tonumber(inputSpeed.Text) or 1.5
     
     for i = 1, 10 do
@@ -650,7 +665,7 @@ local function runFarmCycle()
         local currentStage = normalStages:FindFirstChild("CaveStage" .. i)
         local targetPart = currentStage and currentStage:FindFirstChild("DarknessPart")
         if targetPart then
-            ToggleBtn.Text = "Traveling: Stage " .. i
+            ToggleBtn.Text = "Farming stage " .. i .. "..."
             managePlatform(targetPart.CFrame)
             LocalPlayer.Character.HumanoidRootPart.CFrame = targetPart.CFrame
         end
@@ -661,18 +676,15 @@ local function runFarmCycle()
         local endStage = normalStages:FindFirstChild("TheEnd")
         local chestTrigger = endStage and endStage:FindFirstChild("GoldenChest") and endStage.GoldenChest:FindFirstChild("Trigger")
         if chestTrigger then
-            ToggleBtn.Text = "Opening Chest..."
+            ToggleBtn.Text = "Grabbing chest..."
             managePlatform(chestTrigger.CFrame)
             LocalPlayer.Character.HumanoidRootPart.CFrame = chestTrigger.CFrame
         end
         task.wait(4)
         removePlatform()
-        ToggleBtn.Text = "Resetting..."
+        ToggleBtn.Text = "Resetting character..."
         
-        -- Increment tracking metrics
         totalLoopsCompleted = totalLoopsCompleted + 1
-        
-        -- Check loop interval threshold parameters before parsing updates
         local targetInterval = tonumber(inputWebInterval.Text) or 5
         if totalLoopsCompleted % targetInterval == 0 then
             sendWebhookUpdate()
@@ -681,12 +693,11 @@ local function runFarmCycle()
     loopThreadActive = false
 end
 
--- Ignition event hooks running dynamic thread validation when character returns to spawn
 LocalPlayer.CharacterAdded:Connect(function()
     if toggled then
         for cooldown = 6, 1, -1 do
             if not toggled then break end
-            ToggleBtn.Text = "Starting in " .. cooldown .. "s..."
+            ToggleBtn.Text = "Starting next loop in " .. cooldown .. "s..."
             task.wait(1)
         end
         local claimRemote = Workspace:FindFirstChild("ClaimRiverResultsGold")
@@ -695,12 +706,11 @@ LocalPlayer.CharacterAdded:Connect(function()
     end
 end)
 
--- Toggle Button Execution Connectors (Runs completely independent of webhooks)
 ToggleBtn.MouseButton1Click:Connect(function()
     toggled = not toggled
     if toggled then
         ToggleBtn.Text = "Auto Farm: ON"
-        ToggleBtn.BackgroundColor3 = Color3.fromRGB(45, 140, 85) -- Smooth Slate Green Theme Accent
+        ToggleBtn.BackgroundColor3 = Color3.fromRGB(45, 140, 85)
         if isCharacterReady() then task.spawn(runFarmCycle) end
     else
         ToggleBtn.Text = "Auto Farm: OFF"
@@ -708,6 +718,6 @@ ToggleBtn.MouseButton1Click:Connect(function()
         removePlatform()
     end
 end)
-
-localPlayer.CharacterRemoving:Connect(removePlatform)
+LocalPlayer.CharacterRemoving:Connect(removePlatform)
 -- // END OF FILE: Part6.lua //
+
