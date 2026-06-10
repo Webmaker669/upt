@@ -146,7 +146,7 @@ switchTab("Start", startTabBtn)
 _G.BoatHub_Part1 = { StartPage = StartPage, CirclePage = CirclePage, AutoFarmPage = AutoFarmPage, MainFrame = MainFrame }
 
 -- =============================================================================
--- PART 2: DATA TEXTBOXES & INTEGRATED CLIPBOARD SYSTEM
+-- PART 2: UI DATA TEXTBOXES & FIELD INITIALIZATION
 -- =============================================================================
 local dataHook = _G.BoatHub_Part1
 if not dataHook then error("Missing Hook: Part 1 layout wasn't found in game memory.") end
@@ -172,25 +172,17 @@ CopyBox.Size = UDim2.new(1, -30, 0, 36)
 CopyBox.Position = UDim2.new(0, 15, 0, 60)
 CopyBox.Text = "Click here to copy the Discord Invite Link!"
 CopyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-CopyBox.BackgroundColor3 = Color3.fromRGB(88, 101, 242) -- Discord Blurple
+CopyBox.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
 CopyBox.Font = Enum.Font.GothamBold
 CopyBox.TextSize = 12
 Instance.new("UICorner", CopyBox).CornerRadius = UDim.new(0, 6)
 
--- Clipboard Hook Action Listener
 CopyBox.MouseButton1Click:Connect(function()
-    local inviteUrl = "https://discord.com/invite/3xCwTAYhXe"
+    local inviteUrl = "https://discord.com"
+    if setclipboard then setclipboard(inviteUrl)
+    elseif toclipboard then toclipboard(inviteUrl)
+    elseif Clipboard and Clipboard.set then Clipboard.set(inviteUrl) end
     
-    -- Universal compatibility checker across mobile executors
-    if setclipboard then
-        setclipboard(inviteUrl)
-    elseif toclipboard then
-        toclipboard(inviteUrl)
-    elseif Clipboard and Clipboard.set then
-        Clipboard.set(inviteUrl)
-    end
-    
-    -- Visual click indicator
     CopyBox.Text = "Copied link to clipboard!"
     CopyBox.BackgroundColor3 = Color3.fromRGB(46, 139, 87)
     task.wait(2)
@@ -301,14 +293,13 @@ local function addFarmField(labelText, yPos, defaultValue)
 end
 
 local inputSpeed = addFarmField("Teleport Delay (seconds):", 100, "1.5")
-local inputWebhook = addFarmField("Discord Webhook URL:", 135, "")
-local inputWebInterval = addFarmField("Send Update Every X Loops:", 170, "5")
+local inputWebhook = addFarmField("Discord Webhook URL Addon:", 135, "")
 
 -- Privacy Label Addon
 local DisclaimerLabel = Instance.new("TextLabel", AutoFarmPage)
 DisclaimerLabel.Size = UDim2.new(1, -30, 0, 30)
-DisclaimerLabel.Position = UDim2.new(0, 15, 0, 205)
-DisclaimerLabel.Text = "* Privacy Note: Your webhooks are handled completely on your own device. They are never saved, tracked, or shared."
+DisclaimerLabel.Position = UDim2.new(0, 15, 0, 175)
+DisclaimerLabel.Text = "* Privacy Notice: Your webhooks are handled completely on your own device. They are never saved, tracked, or shared."
 DisclaimerLabel.TextColor3 = Color3.fromRGB(165, 165, 170)
 DisclaimerLabel.TextSize = 10
 DisclaimerLabel.Font = Enum.Font.SourceSans
@@ -319,7 +310,6 @@ DisclaimerLabel.TextXAlignment = Enum.TextXAlignment.Left
 -- Export Environment Globals to memory
 _G.CBuilder_SpeedBox = inputSpeed
 _G.CBuilder_WebhookBox = inputWebhook
-_G.CBuilder_IntervalBox = inputWebInterval
 _G.CBuilder_FarmToggle = ToggleBtn
 
 _G.BoatHub_Part2 = {
@@ -580,12 +570,12 @@ local HttpService = game:GetService("HttpService")
 
 local inputSpeed = _G.CBuilder_SpeedBox
 local inputWebhook = _G.CBuilder_WebhookBox
-local inputWebInterval = _G.CBuilder_IntervalBox
 local ToggleBtn = _G.CBuilder_FarmToggle
 
 local toggled, platform, loopThreadActive = false, nil, false
 local totalLoopsCompleted = 0
 local initialGoldValue = 0
+local webhookSentForThisSpawn = false
 
 local goldValueObject = LocalPlayer:WaitForChild("Data", 5) and LocalPlayer.Data:WaitForChild("Gold", 5)
 if goldValueObject then initialGoldValue = goldValueObject.Value end
@@ -597,7 +587,6 @@ local function sendWebhookUpdate()
     local currentGold = goldValueObject and goldValueObject.Value or 0
     local goldEarned = currentGold - initialGoldValue
     
-    -- Relaxed, clean layout structure for logging
     local payloadData = {
         username = "Boat Hub Logger",
         embeds = {{
@@ -680,20 +669,44 @@ local function runFarmCycle()
             managePlatform(chestTrigger.CFrame)
             LocalPlayer.Character.HumanoidRootPart.CFrame = chestTrigger.CFrame
         end
+        
+        -- Hold for server transaction to finish
         task.wait(4)
         removePlatform()
-        ToggleBtn.Text = "Resetting character..."
-        
         totalLoopsCompleted = totalLoopsCompleted + 1
-        local targetInterval = tonumber(inputWebInterval.Text) or 5
-        if totalLoopsCompleted % targetInterval == 0 then
-            sendWebhookUpdate()
+        
+        -- Force-Reset Safety Loop Check
+        if isCharacterReady() then
+            ToggleBtn.Text = "Enforcing Character Reset..."
+            LocalPlayer.Character.Humanoid.Health = 0
+        else
+            ToggleBtn.Text = "Resetting character..."
         end
     end
     loopThreadActive = false
 end
 
-LocalPlayer.CharacterAdded:Connect(function()
+-- Physics-Locked Spawn Pad Listener Hook Matrix
+local function setupSpawnDetection(character)
+    local humanoid = character:WaitForChild("Humanoid", 5)
+    if not humanoid then return end
+    
+    humanoid.Touched:Connect(function(touchedPart)
+        if toggled and touchedPart:IsA("SpawnLocation") then
+            -- Dispatches data packet and updates values immediately when touchdown occurs
+            if not webhookSentForThisSpawn then
+                webhookSentForThisSpawn = true
+                sendWebhookUpdate()
+            end
+        end
+    end)
+end
+
+-- Re-ignition hooks handling respawn sequence cycles
+LocalPlayer.CharacterAdded:Connect(function(char)
+    webhookSentForThisSpawn = false
+    setupSpawnDetection(char)
+    
     if toggled then
         for cooldown = 6, 1, -1 do
             if not toggled then break end
@@ -705,6 +718,9 @@ LocalPlayer.CharacterAdded:Connect(function()
         if toggled and isCharacterReady() then task.spawn(runFarmCycle) end
     end
 end)
+
+-- Initial binding for script running mid-game injection states
+if LocalPlayer.Character then setupSpawnDetection(LocalPlayer.Character) end
 
 ToggleBtn.MouseButton1Click:Connect(function()
     toggled = not toggled
@@ -720,4 +736,5 @@ ToggleBtn.MouseButton1Click:Connect(function()
 end)
 LocalPlayer.CharacterRemoving:Connect(removePlatform)
 -- // END OF FILE: Part6.lua //
+
 
