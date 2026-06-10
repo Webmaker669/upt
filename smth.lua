@@ -79,7 +79,7 @@ local CirclePage = dataHook.CirclePage
 local AutoFarmPage = dataHook.AutoFarmPage
 local StartPage = dataHook.StartPage
 
--- Home Page Title
+-- Home / Start Page Info Layout Configuration
 local HomeTitle = Instance.new("TextLabel", StartPage)
 HomeTitle.Size = UDim2.new(1, -30, 0, 30)
 HomeTitle.Position = UDim2.new(0, 15, 0, 20)
@@ -102,7 +102,7 @@ CopyBox.ClearTextOnFocus = false
 CopyBox.TextEditable = false
 Instance.new("UICorner", CopyBox).CornerRadius = UDim.new(0, 6)
 
--- Circle Form Factor Config Inputs
+-- Circle Page Configuration Inputs Builder
 local function addCircleInput(labelText, yPos, defaultValue, editable)
     local lbl = Instance.new("TextLabel", CirclePage)
     lbl.Size = UDim2.new(0, 150, 0, 26)
@@ -160,7 +160,7 @@ local btnSelect = appendCircleButton("Select Center Target Block", 235, Color3.f
 local btnPreview = appendCircleButton("Hologram Preview Configuration: Disabled", 270, Color3.fromRGB(90, 90, 95))
 local btnBuild = appendCircleButton("Commence Circle Construction", 305, Color3.fromRGB(45, 140, 85))
 
--- Auto Farm Setup
+-- Auto Farm Title Header Elements
 local FarmTitle = Instance.new("TextLabel", AutoFarmPage)
 FarmTitle.Size = UDim2.new(1, -30, 0, 25)
 FarmTitle.Position = UDim2.new(0, 15, 0, 15)
@@ -181,7 +181,8 @@ ToggleBtn.TextSize = 14
 ToggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 6)
 
-local function addFarmField(labelText, yPos, defaultValue)
+-- Configuration Fields Layout Pointers
+local function addFarmConfigField(labelText, yPos, defaultValue)
     local lbl = Instance.new("TextLabel", AutoFarmPage)
     lbl.Size = UDim2.new(0, 180, 0, 26)
     lbl.Position = UDim2.new(0, 15, 0, yPos)
@@ -204,23 +205,23 @@ local function addFarmField(labelText, yPos, defaultValue)
     return box
 end
 
-local inputSpeed = addFarmField("Teleport Speed Delay (s):", 100, "1.5")
-local inputWebhook = addFarmField("Discord Webhook URL Addon:", 135, "")
-local inputWebInterval = addFarmField("Webhook Send Interval (Loops):", 170, "5")
+local inputSpeed = addFarmConfigField("Teleport Speed Delay (s):", 100, "1.5")
+local inputWebhook = addFarmConfigField("Discord Webhook URL Addon:", 135, "")
+local inputWebInterval = addFarmConfigField("Webhook Send Interval (Loops):", 170, "5")
 
--- Privacy Label
+-- Privacy Policy Security Label Addon (Fixed: Swapped GothamItalic to valid font type)
 local DisclaimerLabel = Instance.new("TextLabel", AutoFarmPage)
 DisclaimerLabel.Size = UDim2.new(1, -30, 0, 30)
 DisclaimerLabel.Position = UDim2.new(0, 15, 0, 205)
 DisclaimerLabel.Text = "* Privacy Notice: All webhooks are processed purely on the local client side. Your webhook URL is never saved, transmitted externally, or shared."
 DisclaimerLabel.TextColor3 = Color3.fromRGB(165, 165, 170)
 DisclaimerLabel.TextSize = 10
-DisclaimerLabel.Font = Enum.Font.GothamItalic
+DisclaimerLabel.Font = Enum.Font.SourceSans -- Safe, universally supported font style style
 DisclaimerLabel.TextWrapped = true
 DisclaimerLabel.BackgroundTransparency = 1
 DisclaimerLabel.TextXAlignment = Enum.TextXAlignment.Left
 
--- Absolute Fixed Storage Pointers
+-- Export Fixed Shared Environment Hooks
 _G.CBuilder_SpeedBox = inputSpeed
 _G.CBuilder_WebhookBox = inputWebhook
 _G.CBuilder_IntervalBox = inputWebInterval
@@ -231,7 +232,7 @@ _G.BoatHub_Part2 = {
     inputBlockType = inputBlockType, inputSizeX = inputSizeX, inputSizeZ = inputSizeZ,
     statusLabel = statusLabel, btnSelect = btnSelect, btnPreview = btnPreview, btnBuild = btnBuild
 }
--- // END OF FILE //
+-- // END OF FILE: Part_2.lua //
 
 -- =============================================================================
 -- PART 3: HOME INTERFACE & CONFIGURATION FIELDS
