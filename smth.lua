@@ -248,11 +248,11 @@ local btnSelect = appendCircleButton("Select Center Block", 235, Color3.fromRGB(
 local btnPreview = appendCircleButton("Hologram Preview: Off", 270, Color3.fromRGB(90, 90, 95))
 local btnBuild = appendCircleButton("Build Circle", 305, Color3.fromRGB(45, 140, 85))
 
--- Auto Farm Panel Configuration Fields
+-- AutoFarm Panel Configuration Fields (Renamed To One Word)
 local FarmTitle = Instance.new("TextLabel", AutoFarmPage)
 FarmTitle.Size = UDim2.new(1, -30, 0, 25)
 FarmTitle.Position = UDim2.new(0, 15, 0, 15)
-FarmTitle.Text = "Auto Stage Farm Settings"
+FarmTitle.Text = "AutoFarm Settings"
 FarmTitle.TextColor3 = Color3.fromRGB(240, 240, 245)
 FarmTitle.Font = Enum.Font.GothamBold
 FarmTitle.TextSize = 14
@@ -262,7 +262,7 @@ FarmTitle.TextXAlignment = Enum.TextXAlignment.Left
 local ToggleBtn = Instance.new("TextButton", AutoFarmPage)
 ToggleBtn.Size = UDim2.new(1, -30, 0, 40)
 ToggleBtn.Position = UDim2.new(0, 15, 0, 45)
-ToggleBtn.Text = "Auto Farm: OFF"
+ToggleBtn.Text = "AutoFarm: OFF"
 ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleBtn.Font = Enum.Font.GothamBold
 ToggleBtn.TextSize = 14
@@ -294,11 +294,12 @@ end
 
 local inputSpeed = addFarmField("Teleport Delay (seconds):", 100, "1.5")
 local inputWebhook = addFarmField("Discord Webhook URL Addon:", 135, "")
+local inputWebInterval = addFarmField("Send Update Every X Spawns:", 170, "1") -- Restored notification field
 
 -- Privacy Label Addon
 local DisclaimerLabel = Instance.new("TextLabel", AutoFarmPage)
 DisclaimerLabel.Size = UDim2.new(1, -30, 0, 30)
-DisclaimerLabel.Position = UDim2.new(0, 15, 0, 175)
+DisclaimerLabel.Position = UDim2.new(0, 15, 0, 210)
 DisclaimerLabel.Text = "* Privacy Notice: Your webhooks are handled completely on your own device. They are never saved, tracked, or shared."
 DisclaimerLabel.TextColor3 = Color3.fromRGB(165, 165, 170)
 DisclaimerLabel.TextSize = 10
@@ -310,6 +311,7 @@ DisclaimerLabel.TextXAlignment = Enum.TextXAlignment.Left
 -- Export Environment Globals to memory
 _G.CBuilder_SpeedBox = inputSpeed
 _G.CBuilder_WebhookBox = inputWebhook
+_G.CBuilder_IntervalBox = inputWebInterval
 _G.CBuilder_FarmToggle = ToggleBtn
 
 _G.BoatHub_Part2 = {
@@ -559,7 +561,7 @@ btnBuild.MouseButton1Click:Connect(function()
 end)
 
 -- =============================================================================
--- PART 6: AUTOMATED AUTO-FARM ENGINE WITH WEBHOOK DISPATCHER
+-- PART 6: AUTOMATED AUTOFARM ENGINE WITH INTERVAL DISPATCHER
 -- =============================================================================
 local core = _G.BoatHub_Part1
 if not core then error("Sequence Interrupted: Main UI layout missing.") end
@@ -570,6 +572,7 @@ local HttpService = game:GetService("HttpService")
 
 local inputSpeed = _G.CBuilder_SpeedBox
 local inputWebhook = _G.CBuilder_WebhookBox
+local inputWebInterval = _G.CBuilder_IntervalBox
 local ToggleBtn = _G.CBuilder_FarmToggle
 
 local toggled, platform, loopThreadActive = false, nil, false
@@ -590,7 +593,7 @@ local function sendWebhookUpdate()
     local payloadData = {
         username = "Boat Hub Logger",
         embeds = {{
-            title = "Auto Farm Status Report",
+            title = "AutoFarm Status Report",
             color = 3066993,
             fields = {
                 {name = "User", value = "`" .. LocalPlayer.Name .. "`", inline = true},
@@ -670,14 +673,13 @@ local function runFarmCycle()
             LocalPlayer.Character.HumanoidRootPart.CFrame = chestTrigger.CFrame
         end
         
-        -- Hold for server transaction to finish
         task.wait(4)
         removePlatform()
         totalLoopsCompleted = totalLoopsCompleted + 1
         
-        -- Force-Reset Safety Loop Check
+        -- Anti-softlock auto reset validation
         if isCharacterReady() then
-            ToggleBtn.Text = "Enforcing Character Reset..."
+            ToggleBtn.Text = "Forcing character reset..."
             LocalPlayer.Character.Humanoid.Health = 0
         else
             ToggleBtn.Text = "Resetting character..."
@@ -686,23 +688,27 @@ local function runFarmCycle()
     loopThreadActive = false
 end
 
--- Physics-Locked Spawn Pad Listener Hook Matrix
+-- Monitor when character steps onto a base spawn pad tile
 local function setupSpawnDetection(character)
     local humanoid = character:WaitForChild("Humanoid", 5)
     if not humanoid then return end
     
     humanoid.Touched:Connect(function(touchedPart)
         if toggled and touchedPart:IsA("SpawnLocation") then
-            -- Dispatches data packet and updates values immediately when touchdown occurs
             if not webhookSentForThisSpawn then
                 webhookSentForThisSpawn = true
-                sendWebhookUpdate()
+                
+                -- Pull interval counter constraint numbers typed by the user
+                local targetInterval = tonumber(inputWebInterval.Text) or 1
+                if totalLoopsCompleted % targetInterval == 0 and totalLoopsCompleted > 0 then
+                    sendWebhookUpdate()
+                end
             end
         end
     end)
 end
 
--- Re-ignition hooks handling respawn sequence cycles
+-- Re-ignition listener handling respawn loops
 LocalPlayer.CharacterAdded:Connect(function(char)
     webhookSentForThisSpawn = false
     setupSpawnDetection(char)
@@ -719,22 +725,23 @@ LocalPlayer.CharacterAdded:Connect(function(char)
     end
 end)
 
--- Initial binding for script running mid-game injection states
 if LocalPlayer.Character then setupSpawnDetection(LocalPlayer.Character) end
 
+-- Toggle connection handling independent state settings
 ToggleBtn.MouseButton1Click:Connect(function()
     toggled = not toggled
     if toggled then
-        ToggleBtn.Text = "Auto Farm: ON"
+        ToggleBtn.Text = "AutoFarm: ON"
         ToggleBtn.BackgroundColor3 = Color3.fromRGB(45, 140, 85)
         if isCharacterReady() then task.spawn(runFarmCycle) end
     else
-        ToggleBtn.Text = "Auto Farm: OFF"
+        ToggleBtn.Text = "AutoFarm: OFF"
         ToggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
         removePlatform()
     end
 end)
 LocalPlayer.CharacterRemoving:Connect(removePlatform)
 -- // END OF FILE: Part6.lua //
+
 
 
