@@ -1,5 +1,5 @@
 -- =============================================================================
--- PART 1: MASTER MAIN FRAMEWORK & PAGES
+-- PART 1: MAIN CANVAS & FIXED INTERNAL NAV SIDEBAR
 -- =============================================================================
 local CoreGui = game:GetService("CoreGui")
 
@@ -18,12 +18,12 @@ ReopenButton.Position = UDim2.new(0, 15, 0, 15)
 ReopenButton.Text = "Open Tool Hub"
 ReopenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ReopenButton.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
-ReopenButton.Font = Enum.Font.SourceSansBold
+ReopenButton.Font = Enum.Font.GothamBold
 ReopenButton.TextSize = 13
 ReopenButton.Visible = false
 Instance.new("UICorner", ReopenButton).CornerRadius = UDim.new(0, 6)
 
--- Main Interface Panel (Fixed Proportional Boundary Container)
+-- Main Interface Panel
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 550, 0, 420)
 MainFrame.Position = UDim2.new(0.5, -275, 0.4, -210)
@@ -51,7 +51,7 @@ TitleLabel.Size = UDim2.new(1, -60, 1, 0)
 TitleLabel.Position = UDim2.new(0, 15, 0, 0)
 TitleLabel.Text = "BUILD A BOAT TOOL HUB"
 TitleLabel.TextColor3 = Color3.fromRGB(240, 240, 245)
-TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.Font = Enum.Font.GothamBold
 TitleLabel.TextSize = 18
 TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 TitleLabel.BackgroundTransparency = 1
@@ -62,11 +62,11 @@ CloseBtn.Position = UDim2.new(1, -35, 0.5, -12)
 CloseBtn.Text = "X"
 CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-CloseBtn.Font = Enum.Font.SourceSansBold
+CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.TextSize = 12
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 12)
 
--- Navigation Sidebar Frame
+-- Fixed Left Sidebar Panel Layout (Parented inside MainFrame window boundary)
 local SidebarFrame = Instance.new("Frame", MainFrame)
 SidebarFrame.Size = UDim2.new(0, 120, 1, -50)
 SidebarFrame.Position = UDim2.new(0, 0, 0, 50)
@@ -90,7 +90,7 @@ NavListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 local NavPadding = Instance.new("UIPadding", SidebarFrame)
 NavPadding.PaddingTop = UDim.new(0, 15)
 
--- Main Page Viewer Box Container
+-- Viewport Content Panel Frame
 local ContentContainer = Instance.new("Frame", MainFrame)
 ContentContainer.Size = UDim2.new(1, -120, 1, -50)
 ContentContainer.Position = UDim2.new(0, 120, 0, 50)
@@ -123,13 +123,14 @@ local function switchTab(name, button)
     activeTabBtn.BackgroundColor3 = Color3.fromRGB(65, 135, 240)
 end
 
+-- FIXED: Parents buttons directly to SidebarFrame instead of the screen
 local function addTabButton(text, targetPageName, order)
     local btn = Instance.new("TextButton", SidebarFrame)
     btn.Size = UDim2.new(0, 100, 0, 35)
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(240, 240, 245)
     btn.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
-    btn.Font = Enum.Font.SourceSans
+    btn.Font = Enum.Font.GothamSemibold
     btn.TextSize = 12
     btn.LayoutOrder = order
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
@@ -148,9 +149,10 @@ ReopenButton.MouseButton1Click:Connect(function() MainFrame.Visible = true Reope
 switchTab("Start", startTabBtn)
 
 _G.BoatHub_Part1 = { StartPage = StartPage, CirclePage = CirclePage, AutoFarmPage = AutoFarmPage, MainFrame = MainFrame }
+-- // END OF FILE: Part1.lua //
 
 -- =============================================================================
--- PART 2: UI DATA FIELDS & PRIVACY DISCLAIMER
+-- PART 2: UI DATA TEXTBOXES & FIELD INITIALIZATION
 -- =============================================================================
 local dataHook = _G.BoatHub_Part1
 if not dataHook then error("Part 2 missing initialization hook from Part 1.") end
@@ -159,13 +161,13 @@ local CirclePage = dataHook.CirclePage
 local AutoFarmPage = dataHook.AutoFarmPage
 local StartPage = dataHook.StartPage
 
--- Home Page Layout Setup
+-- Home / Start Page Info Layout Configuration
 local HomeTitle = Instance.new("TextLabel", StartPage)
 HomeTitle.Size = UDim2.new(1, -30, 0, 30)
 HomeTitle.Position = UDim2.new(0, 15, 0, 20)
 HomeTitle.Text = "Welcome to the Integrated Tool Hub"
 HomeTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-HomeTitle.Font = Enum.Font.SourceSansBold
+HomeTitle.Font = Enum.Font.GothamBold
 HomeTitle.TextSize = 15
 HomeTitle.BackgroundTransparency = 1
 HomeTitle.TextXAlignment = Enum.TextXAlignment.Left
@@ -176,13 +178,13 @@ CopyBox.Position = UDim2.new(0, 15, 0, 60)
 CopyBox.Text = "https://discord.com"
 CopyBox.TextColor3 = Color3.fromRGB(114, 137, 218)
 CopyBox.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
-CopyBox.Font = Enum.Font.SourceSansBold
+CopyBox.Font = Enum.Font.GothamBold
 CopyBox.TextSize = 11
 CopyBox.ClearTextOnFocus = false
 CopyBox.TextEditable = false
 Instance.new("UICorner", CopyBox).CornerRadius = UDim.new(0, 6)
 
--- Circle Configuration Text Inputs
+-- Circle Page Configuration Inputs Builder
 local function addCircleInput(labelText, yPos, defaultValue, editable)
     local lbl = Instance.new("TextLabel", CirclePage)
     lbl.Size = UDim2.new(0, 150, 0, 26)
@@ -192,7 +194,7 @@ local function addCircleInput(labelText, yPos, defaultValue, editable)
     lbl.TextSize = 12
     lbl.TextXAlignment = Enum.TextXAlignment.Left
     lbl.BackgroundTransparency = 1
-    lbl.Font = Enum.Font.SourceSans
+    lbl.Font = Enum.Font.Gotham
     
     local box = Instance.new("TextBox", CirclePage)
     box.Size = UDim2.new(0, 140, 0, 26)
@@ -200,7 +202,7 @@ local function addCircleInput(labelText, yPos, defaultValue, editable)
     box.Text = defaultValue
     box.TextColor3 = Color3.fromRGB(255, 255, 255)
     box.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
-    box.Font = Enum.Font.SourceSans
+    box.Font = Enum.Font.GothamSemibold
     box.TextSize = 12
     box.TextEditable = editable
     Instance.new("UICorner", box).CornerRadius = UDim.new(0, 5)
@@ -220,7 +222,7 @@ statusLabel.Position = UDim2.new(0, 15, 0, 205)
 statusLabel.Text = "Center Target Block: Not Selected"
 statusLabel.TextColor3 = Color3.fromRGB(240, 90, 90)
 statusLabel.TextSize = 11
-statusLabel.Font = Enum.Font.SourceSansBold
+statusLabel.Font = Enum.Font.GothamSemibold
 statusLabel.BackgroundTransparency = 1
 
 local function appendCircleButton(text, yPos, color)
@@ -230,7 +232,7 @@ local function appendCircleButton(text, yPos, color)
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.TextSize = 11
-    btn.Font = Enum.Font.SourceSansBold
+    btn.Font = Enum.Font.GothamBold
     btn.BackgroundColor3 = color
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 5)
     return btn
@@ -240,13 +242,13 @@ local btnSelect = appendCircleButton("Select Center Target Block", 235, Color3.f
 local btnPreview = appendCircleButton("Hologram Preview Configuration: Disabled", 270, Color3.fromRGB(90, 90, 95))
 local btnBuild = appendCircleButton("Commence Circle Construction", 305, Color3.fromRGB(45, 140, 85))
 
--- Auto Farm Tab Layout Setup
+-- Auto Farm Title Header Elements
 local FarmTitle = Instance.new("TextLabel", AutoFarmPage)
 FarmTitle.Size = UDim2.new(1, -30, 0, 25)
 FarmTitle.Position = UDim2.new(0, 15, 0, 15)
 FarmTitle.Text = "Automated Stage Progression Farm"
 FarmTitle.TextColor3 = Color3.fromRGB(240, 240, 245)
-FarmTitle.Font = Enum.Font.SourceSansBold
+FarmTitle.Font = Enum.Font.GothamBold
 FarmTitle.TextSize = 14
 FarmTitle.BackgroundTransparency = 1
 FarmTitle.TextXAlignment = Enum.TextXAlignment.Left
@@ -256,11 +258,12 @@ ToggleBtn.Size = UDim2.new(1, -30, 0, 40)
 ToggleBtn.Position = UDim2.new(0, 15, 0, 45)
 ToggleBtn.Text = "Auto Farm: OFF"
 ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-ToggleBtn.Font = Enum.Font.SourceSansBold
+ToggleBtn.Font = Enum.Font.GothamBold
 ToggleBtn.TextSize = 14
 ToggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 6)
 
+-- Configuration Fields Layout Pointers
 local function addFarmConfigField(labelText, yPos, defaultValue)
     local lbl = Instance.new("TextLabel", AutoFarmPage)
     lbl.Size = UDim2.new(0, 180, 0, 26)
@@ -270,7 +273,7 @@ local function addFarmConfigField(labelText, yPos, defaultValue)
     lbl.TextSize = 12
     lbl.TextXAlignment = Enum.TextXAlignment.Left
     lbl.BackgroundTransparency = 1
-    lbl.Font = Enum.Font.SourceSans
+    lbl.Font = Enum.Font.Gotham
     
     local box = Instance.new("TextBox", AutoFarmPage)
     box.Size = UDim2.new(1, -230, 0, 26)
@@ -278,7 +281,7 @@ local function addFarmConfigField(labelText, yPos, defaultValue)
     box.Text = defaultValue
     box.TextColor3 = Color3.fromRGB(255, 255, 255)
     box.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
-    box.Font = Enum.Font.SourceSans
+    box.Font = Enum.Font.GothamSemibold
     box.TextSize = 12
     Instance.new("UICorner", box).CornerRadius = UDim.new(0, 5)
     return box
@@ -299,7 +302,7 @@ DisclaimerLabel.TextWrapped = true
 DisclaimerLabel.BackgroundTransparency = 1
 DisclaimerLabel.TextXAlignment = Enum.TextXAlignment.Left
 
--- Export Fixed Shared Pointers Directly to Memory Threads
+-- Export Shared Environment Hooks safely
 _G.CBuilder_SpeedBox = inputSpeed
 _G.CBuilder_WebhookBox = inputWebhook
 _G.CBuilder_IntervalBox = inputWebInterval
@@ -310,24 +313,25 @@ _G.BoatHub_Part2 = {
     inputBlockType = inputBlockType, inputSizeX = inputSizeX, inputSizeZ = inputSizeZ,
     statusLabel = statusLabel, btnSelect = btnSelect, btnPreview = btnPreview, btnBuild = btnBuild
 }
+-- // END OF FILE: Part2.lua //
 
 -- =============================================================================
--- PART 3: RECTIFICATION & VISUAL INVENTORY LAYOUTS
+-- PART 3: INVENTORY TRACKING DRAWER INTERFACE
 -- =============================================================================
 local hook1 = _G.BoatHub_Part1
 local hook2 = _G.BoatHub_Part2
-if not hook1 or not hook2 then error("Part 3 configuration missing data parameters.") end
+if not hook1 or not hook2 then error("Part 3 missing execution references from memory.") end
 
-local LocalPlayer = game:GetService("Players").LocalPlayer
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local dataFolder = LocalPlayer:WaitForChild("Data", 5)
+
 local CirclePage = hook1.CirclePage
 local inputBlockType = hook2.inputBlockType
 
-local dataFolder = LocalPlayer:WaitForChild("Data", 5)
-
--- Target Window Drawer
 local BlockPanel = Instance.new("Frame", CirclePage)
 BlockPanel.Size = UDim2.new(1, -30, 0, 180)
-BlockPanel.Position = UDim2.new(0, 15, 0, 140)
+BlockPanel.Position = UDim2.new(0, 15, 0, 140) -- Adjusted position so it pops up correctly
 BlockPanel.BackgroundColor3 = Color3.fromRGB(34, 34, 38)
 BlockPanel.ZIndex = 5
 BlockPanel.Visible = false
@@ -337,9 +341,10 @@ local PanelTitle = Instance.new("TextLabel", BlockPanel)
 PanelTitle.Size = UDim2.new(1, 0, 0, 30)
 PanelTitle.Text = "AVAILABLE BUILDING MATERIALS"
 PanelTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-PanelTitle.Font = Enum.Font.SourceSansBold
+PanelTitle.Font = Enum.Font.GothamBold
 PanelTitle.BackgroundColor3 = Color3.fromRGB(44, 44, 50)
 PanelTitle.TextSize = 11
+PanelTitle.ZIndex = 5
 
 local ScrollingFrame = Instance.new("ScrollingFrame", BlockPanel)
 ScrollingFrame.Size = UDim2.new(1, -20, 1, -40)
@@ -347,6 +352,7 @@ ScrollingFrame.Position = UDim2.new(0, 10, 0, 35)
 ScrollingFrame.BackgroundTransparency = 1
 ScrollingFrame.ScrollBarThickness = 4
 ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+ScrollingFrame.ZIndex = 5
 
 local UIListLayout = Instance.new("UIListLayout", ScrollingFrame)
 UIListLayout.Padding = UDim.new(0, 4)
@@ -355,7 +361,9 @@ UIListLayout.SortOrder = Enum.SortOrder.Name
 inputBlockType.Focused:Connect(function() BlockPanel.Visible = true end)
 
 local function updateInventoryLayout()
-    for _, child in ipairs(ScrollingFrame:GetChildren()) do if child:IsA("TextButton") then child:Destroy() end end
+    for _, child in ipairs(ScrollingFrame:GetChildren()) do 
+        if child:IsA("TextButton") then child:Destroy() end 
+    end
     if not dataFolder then return end
     
     for _, item in ipairs(dataFolder:GetChildren()) do
@@ -365,15 +373,19 @@ local function updateInventoryLayout()
             itemBtn.Text = " " .. item.Name .. " (" .. tostring(item.Value) .. ")"
             itemBtn.TextColor3 = Color3.fromRGB(190, 190, 195)
             itemBtn.BackgroundColor3 = Color3.fromRGB(44, 44, 50)
-            itemBtn.Font = Enum.Font.SourceSans
+            itemBtn.Font = Enum.Font.GothamSemibold
             itemBtn.TextSize = 11
             itemBtn.TextXAlignment = Enum.TextXAlignment.Left
+            itemBtn.ZIndex = 6
             Instance.new("UICorner", itemBtn).CornerRadius = UDim.new(0, 4)
             
             itemBtn.MouseButton1Click:Connect(function()
                 inputBlockType.Text = item.Name
                 BlockPanel.Visible = false
-                if _G.CBuilder_UpdateRing then _G.CBuilder_UpdateRing() end
+                -- FIXED: Added a safety check to prevent nil crashes if the preview function isn't ready
+                if _G.CBuilder_UpdateRing then 
+                    _G.CBuilder_UpdateRing() 
+                end
             end)
         end
     end
@@ -386,13 +398,14 @@ if dataFolder then
 end
 
 _G.BoatHub_Part3 = { dataFolder = dataFolder }
+-- // END OF FILE: Part3.lua //
 
 -- =============================================================================
--- PART 4: BLUEPRINT MATH MATRIX & RENDERING
+-- PART 4: GEOMETRIC COMPILATION & BLUEPRINT MATRIX
 -- =============================================================================
 local hook1 = _G.BoatHub_Part1
 local hook2 = _G.BoatHub_Part2
-if not hook1 or not hook2 then error("Part 4 data trackers missing from workspace.") end
+if not hook1 or not hook2 then error("Part 4 data dependencies missing.") end
 
 local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
@@ -410,6 +423,7 @@ selectionBox.Color3 = Color3.fromRGB(0, 255, 255)
 selectionBox.LineThickness = 0.04
 
 local isSelecting = false
+
 local function updateRingVisuals()
     previewFolder:ClearAllChildren()
     if not _G.CBuilder_CenterPos then return end
@@ -433,7 +447,6 @@ local function updateRingVisuals()
         hp.Color = Color3.fromRGB(0, 255, 255)
         hp.Anchored = true
         hp.CanCollide = false
-        hp.Parent = previewFolder
     end
 end
 
@@ -466,30 +479,33 @@ btnPreview.MouseButton1Click:Connect(function()
     updateRingVisuals()
 end)
 
-_G.BoatHub_Part4 = { previewFolder = previewFolder }
+_G.BoatHub_Part4 = { previewFolder = previewFolder, folder = workspace:WaitForChild("Blocks", 5):WaitForChild(LocalPlayer.Name, 5) }
+-- // END OF FILE: Part4.lua //
 
 -- =============================================================================
--- PART 5: TOOL INVOKERS & SERVER PIPES
+-- PART 5: SERVER EXECUTION PIPES
 -- =============================================================================
 local hook1 = _G.BoatHub_Part1
 local hook2 = _G.BoatHub_Part2
-local hook3 = _G.BoatHub_Part3
 local hook4 = _G.BoatHub_Part4
-if not hook1 or not hook2 or not hook3 or not hook4 then error("Part 5 dependencies collapsed.") end
+if not hook1 or not hook2 or not hook4 then error("Part 5 data dependencies missing.") end
 
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local inputRadius, inputSteps, inputSizeY, inputBlockType = hook2.inputRadius, hook2.inputSteps, hook2.inputSizeY, hook2.inputBlockType
 local statusLabel, btnBuild = hook2.statusLabel, hook2.btnBuild
-local dataFolder = hook3.dataFolder
-local previewFolder = hook4.previewFolder
-
-local folder = workspace:WaitForChild("Blocks", 5):WaitForChild(LocalPlayer.Name, 5)
+local previewFolder, folder = hook4.previewFolder, hook4.folder
+local dataFolder = LocalPlayer:WaitForChild("Data", 5)
 
 btnBuild.MouseButton1Click:Connect(function()
     if not _G.CBuilder_CenterPos then return end
     local blockStr = tostring(inputBlockType.Text)
     local inventoryItem = dataFolder and dataFolder:FindFirstChild(blockStr)
-    if not inventoryItem or inventoryItem.Value <= 0 then return end
+    
+    if not inventoryItem or inventoryItem.Value <= 0 then
+        statusLabel.Text = "Build Failed: Out of Blocks!"
+        statusLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
+        return
+    end
     
     local radius = tonumber(inputRadius.Text) or 20
     local steps = tonumber(inputSteps.Text) or 30
@@ -503,10 +519,14 @@ btnBuild.MouseButton1Click:Connect(function()
     end
     
     local bRF, sRF, pRF = getRF("BuildingTool"), getRF("ScalingTool"), getRF("PaintingTool")
-    if not bRF or not sRF or not pRF then statusLabel.Text = "Equip Building Tools!" return end
+    if not bRF or not sRF or not pRF then 
+        statusLabel.Text = "Missing Tools in Inventory!" 
+        statusLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
+        return 
+    end
     
     previewFolder:ClearAllChildren()
-    btnBuild.Text, btnBuild.Active = "Constructing Active Sector Matrix...", false
+    btnBuild.Text, btnBuild.Active = "Building...", false
     
     for i = 1, steps do
         if inventoryItem.Value <= 0 then break end
@@ -531,10 +551,12 @@ btnBuild.MouseButton1Click:Connect(function()
         end
         task.wait(0.02)
     end
+    
     btnBuild.Text, btnBuild.Active = "Commence Circle Construction", true
-    statusLabel.Text = "Matrix Sequence Completed!"
+    statusLabel.Text = "Circle Successfully Created!"
     statusLabel.TextColor3 = Color3.fromRGB(80, 240, 80)
 end)
+-- // END OF FILE: Part5.lua //
 
 -- =============================================================================
 -- PART 6: AUTOMATED AUTO-FARM ENGINE WITH WEBHOOK DISPATCHER
@@ -546,25 +568,25 @@ local Workspace = game:GetService("Workspace")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local HttpService = game:GetService("HttpService")
 
--- Direct static pointer fetches from our global variable hooks
+-- Fetch the direct static input pointers we assigned in Part 2
 local inputSpeed = _G.CBuilder_SpeedBox
 local inputWebhook = _G.CBuilder_WebhookBox
 local inputWebInterval = _G.CBuilder_IntervalBox
 local ToggleBtn = _G.CBuilder_FarmToggle
 
 if not inputSpeed or not inputWebhook or not ToggleBtn then
-    error("Part 6 Global Error: Part 2 input fields could not be found in memory.")
+    error("Part 6 Global Error: Part 2 interface textboxes could not be read from memory.")
 end
 
 local toggled, platform, loopThreadActive = false, nil, false
 local totalLoopsCompleted = 0
 local initialGoldValue = 0
 
--- Cache base tracking data safely from player currency ledger path
+-- Cache your exact starting gold balance safely
 local goldValueObject = LocalPlayer:WaitForChild("Data", 5) and LocalPlayer.Data:WaitForChild("Gold", 5)
 if goldValueObject then initialGoldValue = goldValueObject.Value end
 
--- Dispatches statistical logs to your channel stream (Only fires if a webhook is entered)
+-- Dispatches your stats to your webhook (Only runs if you type something into the URL box)
 local function sendWebhookUpdate()
     local url = tostring(inputWebhook.Text)
     if url == "" or not string.find(url, "://discord.com") then return end
@@ -669,6 +691,7 @@ local function runFarmCycle()
     loopThreadActive = false
 end
 
+-- Triggers the auto farm loop cleanly every time your character finishes a reset
 LocalPlayer.CharacterAdded:Connect(function()
     if toggled then
         for cooldown = 6, 1, -1 do
@@ -682,6 +705,7 @@ LocalPlayer.CharacterAdded:Connect(function()
     end
 end)
 
+-- Farm Tab Switch Listener Connection (Completely independent of webhooks)
 ToggleBtn.MouseButton1Click:Connect(function()
     toggled = not toggled
     if toggled then
