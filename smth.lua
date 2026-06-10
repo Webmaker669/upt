@@ -1,49 +1,31 @@
 -- =============================================================================
--- PART 1: MAIN CANVAS & TAB ROUTING SYSTEM
+-- PART 1: MAIN CANVAS FRAMEWORK & NAVIGATION
 -- =============================================================================
 local CoreGui = game:GetService("CoreGui")
-
-if CoreGui:FindFirstChild("BuildABoatToolHub") then 
-    CoreGui.BuildABoatToolHub:Destroy() 
-end
+if CoreGui:FindFirstChild("BuildABoatToolHub") then CoreGui.BuildABoatToolHub:Destroy() end
 
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.Name = "BuildABoatToolHub"
 ScreenGui.ResetOnSpawn = false
 
--- Master Reopen Control Frame
-local ReopenButton = Instance.new("TextButton", ScreenGui)
-ReopenButton.Size = UDim2.new(0, 140, 0, 40)
-ReopenButton.Position = UDim2.new(0, 15, 0.85, 0)
-ReopenButton.Text = "Open Tool Hub"
-ReopenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ReopenButton.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
-ReopenButton.Font = Enum.Font.GothamBold
-ReopenButton.TextSize = 13
-ReopenButton.Visible = false
-Instance.new("UICorner", ReopenButton).CornerRadius = UDim.new(0, 6)
-
--- Main Interface Panel Layout Geometry Configuration
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 550, 0, 420)
 MainFrame.Position = UDim2.new(0.5, -275, 0.4, -210)
-MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
-MainFrame.BackgroundTransparency = 0.15 -- Semi-translucent material styling
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+MainFrame.BackgroundTransparency = 0.15
 MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
 
--- Header Visual Band Accent
 local HeaderFrame = Instance.new("Frame", MainFrame)
 HeaderFrame.Size = UDim2.new(1, 0, 0, 50)
-HeaderFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
-HeaderFrame.BorderSizePixel = 0
+HeaderFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 Instance.new("UICorner", HeaderFrame).CornerRadius = UDim.new(0, 10)
 
 local HeaderFix = Instance.new("Frame", HeaderFrame)
 HeaderFix.Size = UDim2.new(1, 0, 0, 10)
 HeaderFix.Position = UDim2.new(0, 0, 1, -10)
-HeaderFix.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+HeaderFix.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 HeaderFix.BorderSizePixel = 0
 
 local TitleLabel = Instance.new("TextLabel", HeaderFrame)
@@ -66,26 +48,23 @@ CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.TextSize = 12
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 12)
 
--- Embedded Navigation Panel Stripe
 local SidebarFrame = Instance.new("Frame", MainFrame)
 SidebarFrame.Size = UDim2.new(0, 120, 1, -50)
 SidebarFrame.Position = UDim2.new(0, 0, 0, 50)
 SidebarFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-SidebarFrame.BackgroundTransparency = 0.2
-SidebarFrame.BorderSizePixel = 0
+SidebarFrame.BackgroundTransparency = 0.3
 Instance.new("UICorner", SidebarFrame).CornerRadius = UDim.new(0, 10)
 
 local SidebarFix = Instance.new("Frame", SidebarFrame)
 SidebarFix.Size = UDim2.new(0, 15, 1, 0)
 SidebarFix.Position = UDim2.new(1, -15, 0, 0)
 SidebarFix.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-SidebarFix.BackgroundTransparency = 0.2
+SidebarFix.BackgroundTransparency = 0.3
 SidebarFix.BorderSizePixel = 0
 
 local NavListLayout = Instance.new("UIListLayout", SidebarFrame)
 NavListLayout.Padding = UDim.new(0, 6)
 NavListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-NavListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
 local NavPadding = Instance.new("UIPadding", SidebarFrame)
 NavPadding.PaddingTop = UDim.new(0, 12)
@@ -95,7 +74,6 @@ ContentContainer.Size = UDim2.new(1, -120, 1, -50)
 ContentContainer.Position = UDim2.new(0, 120, 0, 50)
 ContentContainer.BackgroundTransparency = 1
 
--- Tab Frame Initializer Matrix Loop
 local Pages = {}
 local function createPage(name)
     local pf = Instance.new("ScrollingFrame", ContentContainer)
@@ -125,12 +103,12 @@ end
 
 local function addTabButton(text, targetPageName, order)
     local btn = Instance.new("TextButton", SidebarFrame)
-    btn.Size = UDim2.new(0, 100, 0, 32)
+    btn.Size = UDim2.new(0, 105, 0, 32)
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(240, 240, 245)
     btn.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
     btn.Font = Enum.Font.GothamSemibold
-    btn.TextSize = 12
+    btn.TextSize = 11
     btn.LayoutOrder = order
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
     btn.MouseButton1Click:Connect(function() switchTab(targetPageName, btn) end)
@@ -138,28 +116,24 @@ local function addTabButton(text, targetPageName, order)
 end
 
 local startTabBtn = addTabButton("Hub Home", "Start", 1)
-local circleTabBtn = addTabButton("Circle", "Circle", 2)
+local circleTabBtn = addTabButton("Circle Builder", "Circle", 2)
 local farmTabBtn = addTabButton("Auto Farm", "AutoFarm", 3)
 
-CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false ReopenButton.Visible = true end)
-ReopenButton.MouseButton1Click:Connect(function() MainFrame.Visible = true ReopenButton.Visible = false end)
-
+CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
 switchTab("Start", startTabBtn)
 
--- Export Shared Context Environment Pointers
-_G.BoatHub_Part1 = { StartPage = StartPage, CirclePage = CirclePage, AutoFarmPage = AutoFarmPage, MainFrame = MainFrame }
+_G.BoatHub_Part1 = { StartPage = StartPage, CirclePage = CirclePage, AutoFarmPage = AutoFarmPage, MainFrame = MainFrame, ScreenGui = ScreenGui }
 
 -- =============================================================================
 -- PART 2: UI DATA TEXTBOXES & FIELD INITIALIZATION
 -- =============================================================================
 local dataHook = _G.BoatHub_Part1
-if not dataHook then error("Sequence Interrupt: Part 2 missing parent link hooks.") end
+if not dataHook then error("Part 2 missing initialization hook from Part 1.") end
 
 local CirclePage = dataHook.CirclePage
 local AutoFarmPage = dataHook.AutoFarmPage
 local StartPage = dataHook.StartPage
 
--- Home Layout Welcome Labels
 local HomeTitle = Instance.new("TextLabel", StartPage)
 HomeTitle.Size = UDim2.new(1, -30, 0, 30)
 HomeTitle.Position = UDim2.new(0, 15, 0, 20)
@@ -182,7 +156,6 @@ CopyBox.ClearTextOnFocus = false
 CopyBox.TextEditable = false
 Instance.new("UICorner", CopyBox).CornerRadius = UDim.new(0, 6)
 
--- Helper configuration fields builder for Circle Panel Section
 local function addCircleInput(labelText, yPos, defaultValue, editable)
     local lbl = Instance.new("TextLabel", CirclePage)
     lbl.Size = UDim2.new(0, 150, 0, 26)
@@ -240,7 +213,6 @@ local btnSelect = appendCircleButton("Select Center Target Block", 235, Color3.f
 local btnPreview = appendCircleButton("Hologram Preview Configuration: Disabled", 270, Color3.fromRGB(90, 90, 95))
 local btnBuild = appendCircleButton("Commence Circle Construction", 305, Color3.fromRGB(45, 140, 85))
 
--- Auto Farm Setup Header Options
 local FarmTitle = Instance.new("TextLabel", AutoFarmPage)
 FarmTitle.Size = UDim2.new(1, -30, 0, 25)
 FarmTitle.Position = UDim2.new(0, 15, 0, 15)
@@ -288,10 +260,9 @@ local inputSpeed = addFarmConfigField("Teleport Speed Delay (s):", 100, "1.5")
 local inputWebhook = addFarmConfigField("Discord Webhook URL Addon:", 135, "")
 local inputWebInterval = addFarmConfigField("Webhook Send Interval (Loops):", 170, "5")
 
--- Local Privacy Policy Disclaimer Addon Label
 local DisclaimerLabel = Instance.new("TextLabel", AutoFarmPage)
-DisclaimerLabel.Size = UDim2.new(1, -30, 0, 30)
-DisclaimerLabel.Position = UDim2.new(0, 15, 0, 205)
+DisclaimerLabel.Size = UDim2.new(1, -30, 0, 40)
+DisclaimerLabel.Position = UDim2.new(0, 15, 0, 210)
 DisclaimerLabel.Text = "* Privacy Notice: All webhooks are processed purely on the local client side. Your webhook URL is never saved, transmitted externally, or shared."
 DisclaimerLabel.TextColor3 = Color3.fromRGB(165, 165, 170)
 DisclaimerLabel.TextSize = 10
@@ -308,11 +279,11 @@ _G.BoatHub_Part2 = {
 }
 
 -- =============================================================================
--- PART 3: INVENTORY TRACKING DRAWER INTERFACE
+-- PART 3: INVENTORY SYNC DRAWER
 -- =============================================================================
 local hook1 = _G.BoatHub_Part1
 local hook2 = _G.BoatHub_Part2
-if not hook1 or not hook2 then error("Sequence Interrupt: Part 3 parent links broken.") end
+if not hook1 or not hook2 then error("Part 3 missing execution references.") end
 
 local CirclePage = hook1.CirclePage
 local inputBlockType = hook2.inputBlockType
@@ -320,30 +291,29 @@ local dataFolder = game:GetService("Players").LocalPlayer:WaitForChild("Data", 5
 
 local BlockPanel = Instance.new("Frame", CirclePage)
 BlockPanel.Size = UDim2.new(1, -30, 0, 180)
-BlockPanel.Position = UDim2.new(0, 15, 0, 160)
-BlockPanel.BackgroundColor3 = Color3.fromRGB(34, 34, 38)
+BlockPanel.Position = UDim2.new(0, 15, 0, 140)
+BlockPanel.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
 BlockPanel.ZIndex = 5
 BlockPanel.Visible = false
-Instance.new("UICorner", BlockPanel).CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", BlockPanel).CornerRadius = UDim.new(0, 8)
 
 local PanelTitle = Instance.new("TextLabel", BlockPanel)
 PanelTitle.Size = UDim2.new(1, 0, 0, 30)
-PanelTitle.Text = "AVAILABLE BUILDING MATERIALS"
+PanelTitle.Text = "AVAILABLE MATERIALS"
 PanelTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 PanelTitle.Font = Enum.Font.GothamBold
-PanelTitle.BackgroundColor3 = Color3.fromRGB(44, 44, 50)
+PanelTitle.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 PanelTitle.TextSize = 11
 
 local ScrollingFrame = Instance.new("ScrollingFrame", BlockPanel)
 ScrollingFrame.Size = UDim2.new(1, -20, 1, -40)
 ScrollingFrame.Position = UDim2.new(0, 10, 0, 35)
 ScrollingFrame.BackgroundTransparency = 1
-ScrollingFrame.ScrollBarThickness = 4
+ScrollingFrame.ScrollBarThickness = 3
 ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
 local UIListLayout = Instance.new("UIListLayout", ScrollingFrame)
 UIListLayout.Padding = UDim.new(0, 4)
-UIListLayout.SortOrder = Enum.SortOrder.Name
 
 inputBlockType.Focused:Connect(function() BlockPanel.Visible = true end)
 
@@ -355,8 +325,8 @@ local function updateInventoryLayout()
             local itemBtn = Instance.new("TextButton", ScrollingFrame)
             itemBtn.Size = UDim2.new(1, -5, 0, 26)
             itemBtn.Text = " " .. item.Name .. " (" .. tostring(item.Value) .. ")"
-            itemBtn.TextColor3 = Color3.fromRGB(190, 190, 195)
-            itemBtn.BackgroundColor3 = Color3.fromRGB(44, 44, 50)
+            itemBtn.TextColor3 = Color3.fromRGB(200, 200, 205)
+            itemBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
             itemBtn.Font = Enum.Font.GothamSemibold
             itemBtn.TextSize = 11
             itemBtn.TextXAlignment = Enum.TextXAlignment.Left
@@ -380,14 +350,14 @@ end
 _G.BoatHub_Part3 = { dataFolder = dataFolder }
 
 -- =============================================================================
--- PART 4: GEOMETRIC COMPILATION & BLUEPRINT MATRIX
+-- PART 4: BLUEPRINT MATH MATRIX
 -- =============================================================================
 local hook1 = _G.BoatHub_Part1
 local hook2 = _G.BoatHub_Part2
-if not hook1 or not hook2 then error("Sequence Interrupt: Part 4 data paths missing.") end
+if not hook1 or not hook2 then error("Part 4 data dependencies missing.") end
 
-local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 
 local inputRadius, inputSteps, inputSizeY, inputSizeX, inputSizeZ = hook2.inputRadius, hook2.inputSteps, hook2.inputSizeY, hook2.inputSizeX, hook2.inputSizeZ
@@ -453,26 +423,27 @@ end)
 btnPreview.MouseButton1Click:Connect(function()
     _G.CBuilder_LivePreview = not _G.CBuilder_LivePreview
     btnPreview.Text = _G.CBuilder_LivePreview and "Preview Configuration: Active" or "Preview Configuration: Disabled"
-    btnPreview.BackgroundColor3 = _G.CBuilder_LivePreview and Color3.fromRGB(155, 80, 180) or Color3.fromRGB(110, 110, 115)
+    btnPreview.BackgroundColor3 = _G.CBuilder_LivePreview and Color3.fromRGB(155, 80, 180) or Color3.fromRGB(90, 90, 95)
     updateRingVisuals()
 end)
 
 _G.BoatHub_Part4 = { previewFolder = previewFolder }
 
 -- =============================================================================
--- PART 5: SERVER TOOL EVENT INVOKERS
+-- PART 5: CONSTRUCTION TOOL ACTION INVOKERS
 -- =============================================================================
 local hook1 = _G.BoatHub_Part1
 local hook2 = _G.BoatHub_Part2
+local hook3 = _G.BoatHub_Part3
 local hook4 = _G.BoatHub_Part4
-if not hook1 or not hook2 or not hook4 then error("Sequence Interrupt: Part 5 initialization lost dependencies.") end
+if not (hook1 and hook2 and hook3 and hook4) then error("Part 5 deployment failed due to broken chain traces.") end
 
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local inputRadius, inputSteps, inputSizeY, inputBlockType = hook2.inputRadius, hook2.inputSteps, hook2.inputSizeY, hook2.inputBlockType
 local statusLabel, btnBuild = hook2.statusLabel, hook2.btnBuild
+local dataFolder = hook3.dataFolder
 local previewFolder = hook4.previewFolder
 
-local dataFolder = LocalPlayer:WaitForChild("Data", 5)
 local folder = workspace:WaitForChild("Blocks", 5):WaitForChild(LocalPlayer.Name, 5)
 
 btnBuild.MouseButton1Click:Connect(function()
@@ -525,4 +496,3 @@ btnBuild.MouseButton1Click:Connect(function()
     statusLabel.Text = "Matrix Sequence Completed!"
     statusLabel.TextColor3 = Color3.fromRGB(80, 240, 80)
 end)
-
