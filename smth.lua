@@ -23,7 +23,7 @@ ReopenButton.TextSize = 13
 ReopenButton.Visible = false
 Instance.new("UICorner", ReopenButton).CornerRadius = UDim.new(0, 6)
 
--- Main Interface Panel
+-- Main Interface Panel (Proportional Frame Container)
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 550, 0, 420)
 MainFrame.Position = UDim2.new(0.5, -275, 0.4, -210)
@@ -66,7 +66,7 @@ CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.TextSize = 12
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 12)
 
--- Fixed Left Sidebar Panel Layout (Parented inside MainFrame window boundary)
+-- Fixed Left Sidebar Panel Layout (Parented tightly INSIDE MainFrame Boundary)
 local SidebarFrame = Instance.new("Frame", MainFrame)
 SidebarFrame.Size = UDim2.new(0, 120, 1, -50)
 SidebarFrame.Position = UDim2.new(0, 0, 0, 50)
@@ -90,7 +90,7 @@ NavListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 local NavPadding = Instance.new("UIPadding", SidebarFrame)
 NavPadding.PaddingTop = UDim.new(0, 15)
 
--- Viewport Content Panel Frame
+-- Viewport Content Panel
 local ContentContainer = Instance.new("Frame", MainFrame)
 ContentContainer.Size = UDim2.new(1, -120, 1, -50)
 ContentContainer.Position = UDim2.new(0, 120, 0, 50)
@@ -123,7 +123,7 @@ local function switchTab(name, button)
     activeTabBtn.BackgroundColor3 = Color3.fromRGB(65, 135, 240)
 end
 
--- FIXED: Parents buttons directly to SidebarFrame instead of the screen
+-- Fixed Button Assembly Hook (Forced to mount inside SidebarFrame, never drops out)
 local function addTabButton(text, targetPageName, order)
     local btn = Instance.new("TextButton", SidebarFrame)
     btn.Size = UDim2.new(0, 100, 0, 35)
@@ -149,7 +149,7 @@ ReopenButton.MouseButton1Click:Connect(function() MainFrame.Visible = true Reope
 switchTab("Start", startTabBtn)
 
 _G.BoatHub_Part1 = { StartPage = StartPage, CirclePage = CirclePage, AutoFarmPage = AutoFarmPage, MainFrame = MainFrame }
--- // END OF FILE: Part1.lua //
+-- // END OF FILE //
 
 -- =============================================================================
 -- PART 2: UI DATA TEXTBOXES & FIELD INITIALIZATION
