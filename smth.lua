@@ -11,7 +11,6 @@ local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.Name = "BuildABoatToolHub"
 ScreenGui.ResetOnSpawn = false
 
--- Hidden Master Trigger Button
 local ReopenButton = Instance.new("TextButton", ScreenGui)
 ReopenButton.Size = UDim2.new(0, 140, 0, 40)
 ReopenButton.Position = UDim2.new(0, 15, 0, 15)
@@ -23,7 +22,6 @@ ReopenButton.TextSize = 13
 ReopenButton.Visible = false
 Instance.new("UICorner", ReopenButton).CornerRadius = UDim.new(0, 6)
 
--- Main Interface Panel (Forced Naming Matching Directory Indexes)
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 550, 0, 420)
@@ -34,7 +32,6 @@ MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
 
--- Header Bar
 local HeaderFrame = Instance.new("Frame", MainFrame)
 HeaderFrame.Size = UDim2.new(1, 0, 0, 50)
 HeaderFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
@@ -67,7 +64,6 @@ CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.TextSize = 12
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 12)
 
--- Fixed Inner Sidebar Container (Strictly Nested to Map Your Directory Query)
 local OuterSidebar = Instance.new("Frame", MainFrame)
 OuterSidebar.Name = "OuterSidebar"
 OuterSidebar.Size = UDim2.new(0, 120, 1, -50)
@@ -91,7 +87,6 @@ NavListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 local NavPadding = Instance.new("UIPadding", SidebarFrame)
 NavPadding.PaddingTop = UDim.new(0, 15)
 
--- Viewport Content Panel
 local ContentContainer = Instance.new("Frame", MainFrame)
 ContentContainer.Size = UDim2.new(1, -120, 1, -50)
 ContentContainer.Position = UDim2.new(0, 120, 0, 50)
@@ -124,9 +119,8 @@ local function switchTab(name, button)
     activeTabBtn.BackgroundColor3 = Color3.fromRGB(65, 135, 240)
 end
 
--- Generates Button Layer directly inside the exact frame target child path
 local function addTabButton(text, targetPageName, order)
-    local btn = Instance.new("TextButton", SidebarFrame) -- Locks parent directly inside SidebarFrame
+    local btn = Instance.new("TextButton", SidebarFrame)
     btn.Size = UDim2.new(0, 100, 0, 35)
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(240, 240, 245)
@@ -150,7 +144,6 @@ ReopenButton.MouseButton1Click:Connect(function() MainFrame.Visible = true Reope
 switchTab("Start", startTabBtn)
 
 _G.BoatHub_Part1 = { StartPage = StartPage, CirclePage = CirclePage, AutoFarmPage = AutoFarmPage, MainFrame = MainFrame }
--- // END OF FILE: Part1.lua //
 
 -- =============================================================================
 -- PART 2: UI DATA TEXTBOXES & FIELD INITIALIZATION
@@ -162,7 +155,6 @@ local CirclePage = dataHook.CirclePage
 local AutoFarmPage = dataHook.AutoFarmPage
 local StartPage = dataHook.StartPage
 
--- Home / Start Page Info Layout Configuration
 local HomeTitle = Instance.new("TextLabel", StartPage)
 HomeTitle.Size = UDim2.new(1, -30, 0, 30)
 HomeTitle.Position = UDim2.new(0, 15, 0, 20)
@@ -185,7 +177,6 @@ CopyBox.ClearTextOnFocus = false
 CopyBox.TextEditable = false
 Instance.new("UICorner", CopyBox).CornerRadius = UDim.new(0, 6)
 
--- Circle Page Configuration Inputs Builder
 local function addCircleInput(labelText, yPos, defaultValue, editable)
     local lbl = Instance.new("TextLabel", CirclePage)
     lbl.Size = UDim2.new(0, 150, 0, 26)
@@ -243,7 +234,6 @@ local btnSelect = appendCircleButton("Select Center Target Block", 235, Color3.f
 local btnPreview = appendCircleButton("Hologram Preview Configuration: Disabled", 270, Color3.fromRGB(90, 90, 95))
 local btnBuild = appendCircleButton("Commence Circle Construction", 305, Color3.fromRGB(45, 140, 85))
 
--- Auto Farm Title Header Elements
 local FarmTitle = Instance.new("TextLabel", AutoFarmPage)
 FarmTitle.Size = UDim2.new(1, -30, 0, 25)
 FarmTitle.Position = UDim2.new(0, 15, 0, 15)
@@ -264,7 +254,6 @@ ToggleBtn.TextSize = 14
 ToggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 6)
 
--- Configuration Fields Layout Pointers
 local function addFarmConfigField(labelText, yPos, defaultValue)
     local lbl = Instance.new("TextLabel", AutoFarmPage)
     lbl.Size = UDim2.new(0, 180, 0, 26)
@@ -303,7 +292,6 @@ DisclaimerLabel.TextWrapped = true
 DisclaimerLabel.BackgroundTransparency = 1
 DisclaimerLabel.TextXAlignment = Enum.TextXAlignment.Left
 
--- Export Shared Environment Hooks safely
 _G.CBuilder_SpeedBox = inputSpeed
 _G.CBuilder_WebhookBox = inputWebhook
 _G.CBuilder_IntervalBox = inputWebInterval
@@ -314,7 +302,6 @@ _G.BoatHub_Part2 = {
     inputBlockType = inputBlockType, inputSizeX = inputSizeX, inputSizeZ = inputSizeZ,
     statusLabel = statusLabel, btnSelect = btnSelect, btnPreview = btnPreview, btnBuild = btnBuild
 }
--- // END OF FILE: Part2.lua //
 
 -- =============================================================================
 -- PART 3: INVENTORY TRACKING DRAWER INTERFACE
@@ -332,7 +319,7 @@ local inputBlockType = hook2.inputBlockType
 
 local BlockPanel = Instance.new("Frame", CirclePage)
 BlockPanel.Size = UDim2.new(1, -30, 0, 180)
-BlockPanel.Position = UDim2.new(0, 15, 0, 140) -- Adjusted position so it pops up correctly
+BlockPanel.Position = UDim2.new(0, 15, 0, 140)
 BlockPanel.BackgroundColor3 = Color3.fromRGB(34, 34, 38)
 BlockPanel.ZIndex = 5
 BlockPanel.Visible = false
@@ -383,7 +370,6 @@ local function updateInventoryLayout()
             itemBtn.MouseButton1Click:Connect(function()
                 inputBlockType.Text = item.Name
                 BlockPanel.Visible = false
-                -- FIXED: Added a safety check to prevent nil crashes if the preview function isn't ready
                 if _G.CBuilder_UpdateRing then 
                     _G.CBuilder_UpdateRing() 
                 end
@@ -399,7 +385,6 @@ if dataFolder then
 end
 
 _G.BoatHub_Part3 = { dataFolder = dataFolder }
--- // END OF FILE: Part3.lua //
 
 -- =============================================================================
 -- PART 4: GEOMETRIC COMPILATION & BLUEPRINT MATRIX
@@ -481,7 +466,6 @@ btnPreview.MouseButton1Click:Connect(function()
 end)
 
 _G.BoatHub_Part4 = { previewFolder = previewFolder, folder = workspace:WaitForChild("Blocks", 5):WaitForChild(LocalPlayer.Name, 5) }
--- // END OF FILE: Part4.lua //
 
 -- =============================================================================
 -- PART 5: SERVER EXECUTION PIPES
@@ -557,39 +541,39 @@ btnBuild.MouseButton1Click:Connect(function()
     statusLabel.Text = "Circle Successfully Created!"
     statusLabel.TextColor3 = Color3.fromRGB(80, 240, 80)
 end)
--- // END OF FILE: Part5.lua //
 
 -- =============================================================================
 -- PART 6: AUTOMATED AUTO-FARM ENGINE WITH WEBHOOK DISPATCHER
 -- =============================================================================
 local core = _G.BoatHub_Part1
-if not core then error("Part 6 Deployment Failed: Core layout window metrics missing from environment.") end
+if not core then error("Sequence Interrupted: Part 6 cannot locate Part 1 initialization canvas handles.") end
 
 local Workspace = game:GetService("Workspace")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local HttpService = game:GetService("HttpService")
 
--- Fetch the direct static input pointers we assigned in Part 2
+-- Direct static pointer fetches from our global storage variable hooks
 local inputSpeed = _G.CBuilder_SpeedBox
 local inputWebhook = _G.CBuilder_WebhookBox
 local inputWebInterval = _G.CBuilder_IntervalBox
 local ToggleBtn = _G.CBuilder_FarmToggle
 
 if not inputSpeed or not inputWebhook or not ToggleBtn then
-    error("Part 6 Global Error: Part 2 interface textboxes could not be read from memory.")
+    error("Part 6 Global Error: Part 2 interface configuration fields could not be found in memory.")
 end
 
 local toggled, platform, loopThreadActive = false, nil, false
 local totalLoopsCompleted = 0
 local initialGoldValue = 0
 
--- Cache your exact starting gold balance safely
+-- Cache base tracking records safely from local player currency database path
 local goldValueObject = LocalPlayer:WaitForChild("Data", 5) and LocalPlayer.Data:WaitForChild("Gold", 5)
 if goldValueObject then initialGoldValue = goldValueObject.Value end
 
--- Dispatches your stats to your webhook (Only runs if you type something into the URL box)
+-- Dispatches statistical tracking profiles across external channel streams securely
 local function sendWebhookUpdate()
     local url = tostring(inputWebhook.Text)
+    -- If the webhook box is left blank or does not contain a standard address string, skip it
     if url == "" or not string.find(url, "://discord.com") then return end
     
     local currentGold = goldValueObject and goldValueObject.Value or 0
@@ -599,7 +583,7 @@ local function sendWebhookUpdate()
         username = "Tool Hub Tracker",
         embeds = {{
             title = "Auto Farm Progress Update",
-            color = 3066993,
+            color = 3066993, -- Light Cyan Highlight
             fields = {
                 {name = "Local Account Profile", value = "`" .. LocalPlayer.Name .. "`", inline = true},
                 {name = "Loops Documented", value = "`" .. tostring(totalLoopsCompleted) .. "`", inline = true},
@@ -612,6 +596,7 @@ local function sendWebhookUpdate()
     
     task.spawn(function()
         pcall(function()
+            -- Multi-exploit request structure validation protocol compatibility layer
             local request = syn and syn.request or http and http.request or http_request or request
             if request then
                 request({
@@ -650,12 +635,14 @@ local function isCharacterReady()
     return char and hum and hrp and hum.Health > 0
 end
 
+-- Teleport Pipeline Sequence Execution Core Loops
 local function runFarmCycle()
     if not toggled or loopThreadActive then return end
     loopThreadActive = true
     local normalStages = Workspace:FindFirstChild("BoatStages") and Workspace.BoatStages:FindFirstChild("NormalStages")
     if not normalStages then loopThreadActive = false return end
     
+    -- Dynamically calculate pace thresholds specified in your UI config fields
     local speedDelay = tonumber(inputSpeed.Text) or 1.5
     
     for i = 1, 10 do
@@ -682,8 +669,10 @@ local function runFarmCycle()
         removePlatform()
         ToggleBtn.Text = "Resetting..."
         
+        -- Increment tracking metrics
         totalLoopsCompleted = totalLoopsCompleted + 1
         
+        -- Check loop interval threshold parameters before parsing updates
         local targetInterval = tonumber(inputWebInterval.Text) or 5
         if totalLoopsCompleted % targetInterval == 0 then
             sendWebhookUpdate()
@@ -692,7 +681,7 @@ local function runFarmCycle()
     loopThreadActive = false
 end
 
--- Triggers the auto farm loop cleanly every time your character finishes a reset
+-- Ignition event hooks running dynamic thread validation when character returns to spawn
 LocalPlayer.CharacterAdded:Connect(function()
     if toggled then
         for cooldown = 6, 1, -1 do
@@ -706,12 +695,12 @@ LocalPlayer.CharacterAdded:Connect(function()
     end
 end)
 
--- Farm Tab Switch Listener Connection (Completely independent of webhooks)
+-- Toggle Button Execution Connectors (Runs completely independent of webhooks)
 ToggleBtn.MouseButton1Click:Connect(function()
     toggled = not toggled
     if toggled then
         ToggleBtn.Text = "Auto Farm: ON"
-        ToggleBtn.BackgroundColor3 = Color3.fromRGB(45, 140, 85)
+        ToggleBtn.BackgroundColor3 = Color3.fromRGB(45, 140, 85) -- Smooth Slate Green Theme Accent
         if isCharacterReady() then task.spawn(runFarmCycle) end
     else
         ToggleBtn.Text = "Auto Farm: OFF"
@@ -720,5 +709,5 @@ ToggleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
-LocalPlayer.CharacterRemoving:Connect(removePlatform)
+localPlayer.CharacterRemoving:Connect(removePlatform)
 -- // END OF FILE: Part6.lua //
